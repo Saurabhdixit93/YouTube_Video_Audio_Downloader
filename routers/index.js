@@ -6,7 +6,8 @@ const ffmpeg = require('ffmpeg');
 const nodemailer = require('nodemailer');
 const UserContact = require('../model/UserContact');
 const ejs = require('ejs');
-
+// Set YTDL_NO_UPDATE to disable update check for all uses of ytdl-core
+process.env.YTDL_NO_UPDATE = '1';
 
 router.get('/', async (req, res) => {
   const files = fs.readdirSync('public').filter(file => file.endsWith('.mp3'));
