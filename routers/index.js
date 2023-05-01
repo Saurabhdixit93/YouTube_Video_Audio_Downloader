@@ -119,32 +119,59 @@ router.post('/download', async (req, res) => {
 
 
 // Set up the GET request route to download the selected video format
+// router.get('/download', async (req, res) => {
+//   try{
+//     // const url = req.query.url;
+//     // const format = req.query.format;
+//     // const info = await ytdl.getInfo(url);
+//     // const videoTitle = info.videoDetails.title;
+//     // const videoFileName = `${videoTitle}.${format}`;
+//     // const videoStream = ytdl(url, { format: format });
+//     // res.setHeader('Content-Disposition', `attachment; filename="${videoFileName}"`);
+//     // res.setHeader('Content-Type', 'video/mp4');
+//     // videoStream.pipe(res);
+//     const url = req.query.url;
+//     const format = req.query.format;
+//     const info = await ytdl.getInfo(url);
+//     const videoTitle = info.videoDetails.title;
+//     const videoFileName = `${videoTitle}.${format}`;
+//     const videoStream = ytdl(url, { format: format });
+//     res.setHeader('Content-Disposition', 'attachment; filename="' + videoFileName + '"');
+//     res.setHeader('Content-Type', 'video/mp4');
+//     videoStream.pipe(res);
+
+//   }catch(error){
+//     return res.render('VideoConverter', { 
+//       video: null,
+//       title: 'Video Converter And Downloader | Youtube Converter',
+//       message: `'Error When Downloading' ,${error.message}`
+//     });
+//   }
+// });
+
 router.get('/download', async (req, res) => {
-  try{
-    // const url = req.query.url;
-    // const format = req.query.format;
-    // const info = await ytdl.getInfo(url);
-    // const videoTitle = info.videoDetails.title;
-    // const videoFileName = `${videoTitle}.${format}`;
-    // const videoStream = ytdl(url, { format: format });
-    // res.setHeader('Content-Disposition', `attachment; filename="${videoFileName}"`);
-    // res.setHeader('Content-Type', 'video/mp4');
-    // videoStream.pipe(res);
+  try {
     const url = req.query.url;
     const format = req.query.format;
     const info = await ytdl.getInfo(url);
     const videoTitle = info.videoDetails.title;
-    const videoFileName = `${videoTitle}.${format}`;
+    const videoFormats = info.formats.filter((format) => format.hasVideo && format.hasAudio);
     const videoStream = ytdl(url, { format: format });
-    res.setHeader('Content-Disposition', 'attachment; filename="' + videoFileName + '"');
-    res.setHeader('Content-Type', 'video/mp4');
-    videoStream.pipe(res);
 
-  }catch(error){
+    // Set headers for all available video formats
+    videoFormats.forEach((format) => {
+      const videoFileName = `${videoTitle}.${format.container}`;
+      const contentDispositionHeader = `attachment; filename="${videoFileName}"`;
+      res.setHeader('Content-Disposition', contentDispositionHeader);
+      res.setHeader('Content-Type', format.mimeType);
+      videoStream.pipe(res);
+    });
+
+  } catch(error) {
     return res.render('VideoConverter', { 
       video: null,
       title: 'Video Converter And Downloader | Youtube Converter',
-      message: `'Converted Successfully , Please Download' ,${error.message}`
+      message: `Error in downloading: ${error.message}`,
     });
   }
 });
