@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Email Template</title>
+ <style>
+  /* Add your styles here */
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+
+    header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 0;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    p {
+         margin-bottom: 10px;
+    }
+ </style>
+</head>
+<body>
+ <header>
+  <!-- Add your header content here -->
+ </header>
+ <main>
+  <h1>Thank you for contacting us!</h1>
+  <p>We have received your message and will get back to you as soon as possible.</p>
+  <ul>
+   <li>Name: <%= newMessage.name %></li>
+   <li>Email: <%= newMessage.email %></li>
+   <li>Message: <%= newMessage.message %></li>
+  </ul>
+  <p>Best regards,</p>
+  <p>Saurabh Dixit | Admin </p>
+ </main>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<title><%= title %></title>
+
+<section class="section">
+  <% if (message) { %>
+    <div class="popup-form" id="myForm">
+      <div class="popup-content">
+        <div class="close-button" onclick="closeForm()">&times;</div>
+        <h2> <%= message %></h2>
+      </div>
+    </div>
+    <% } %>
+  <div class="container">
+    <h1 class="title has-text-centered mb-5">YouTube to MP3 Converter</h1>
+
+    <form action="/convert-to-audio" method="POST">
+      <div class="field has-addons">
+        <div class="control is-expanded">
+          <input class="input" type="text" name="url" placeholder="Enter YouTube video URL" required>
+        </div>
+        <div class="control">
+          <button class="button is-primary" type="submit">
+            <span class="icon">
+              <i class="fas fa-file-audio"></i>
+            </span>
+            <span>Convert to MP3</span>
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <% if (files.length) { %>
+      <h2 class="title is-4 mt-5 mb-3">Converted MP3 Files:</h2>
+      <ul class="list">
+        <% files.forEach(file => { %>
+          <li class="list-item is-flex is-justify-content-between is-align-items-center">
+            <span><%= file %></span>
+            <a href="/<%= file %>" download class="button is-primary">
+              <span class="icon">
+                <i class="fas fa-download"></i>
+              </span>
+              <span>Download</span>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+</section>

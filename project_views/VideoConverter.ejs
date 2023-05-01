@@ -1,0 +1,50 @@
+<title> <%= title %></title>
+<section class="section">
+    <div>
+        <% if (message) { %>
+            <div class="popup-form" id="myForm">
+              <div class="popup-content">
+                <div class="close-button" onclick="closeForm()">&times;</div>
+                <h2> <%= message %></h2>
+              </div>
+            </div>
+        <% } %>
+    </div>
+    <div class="container">
+     <h1 class="title has-text-centered">YouTube Video Downloader</h1>
+     <div class="columns">
+      <div class="column">
+       <form action="/download" method="POST">
+        <div class="field has-addons">
+         <div class="control is-expanded">
+          <input class="input" type="text" placeholder="Enter YouTube video link" name="url" required>
+         </div>
+         <div class="control">
+            <button class="button is-primary" type="submit">
+                <span class="icon">
+                  <i class="fas fa-file-video"></i>
+                </span>
+                <span>Convert to Video</span>
+            </button>
+         </div>
+        </div>
+       </form>
+       <% if (video) { %>
+        <h2 class="subtitle has-text-centered mt-5">Available formats:</h2>
+        <ul>
+         <% video.formats.forEach(function(format) { %>
+          <li>
+           <a href="/download?format=<%= format.itag %>&url=<%= video.url %>" class="button is-primary is-small">
+            <span class="icon">
+              <i class="fas fa-download"></i>
+            </span>
+            <span><%= format.resolution %>, <%= format.container %></span>
+           </a>
+          </li>
+         <% }) %>
+        </ul>
+       <% } %>
+      </div>
+     </div>
+    </div>
+</section>
