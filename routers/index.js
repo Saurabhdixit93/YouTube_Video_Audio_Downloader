@@ -161,7 +161,11 @@ router.get('/download', async (req, res) => {
     // Set headers for all available video formats
     videoFormats.forEach((format) => {
       const videoFileName = `${videoTitle}.${format.container}`;
-      const contentDispositionHeader = `attachment; filename="${videoFileName}"`;
+      // const contentDispositionHeader = `attachment; filename="${videoFileName}"`;
+      // res.setHeader('Content-Disposition', contentDispositionHeader);
+      // const contentDispositionHeader = `attachment; filename="${videoFileName}"`;
+      // res.setHeader('Content-Disposition', contentDispositionHeader);
+      const contentDispositionHeader = `attachment; filename="${videoFileName}"; charset=utf-8`;
       res.setHeader('Content-Disposition', contentDispositionHeader);
       res.setHeader('Content-Type', format.mimeType);
       videoStream.pipe(res);
