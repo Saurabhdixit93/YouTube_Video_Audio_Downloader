@@ -94,7 +94,7 @@ router.post('/convert-to-audio', async (req, res) => {
 
   // Set up the POST request route to convert the YouTube link to video
 
-router.post('/downloadd', async (req, res) => {
+router.post('/download', async (req, res) => {
   const url = req.body.url;
   if(!ytdl.validateURL(url)){
     return res.render('VideoConverter',{
