@@ -207,23 +207,56 @@ router.post('/download', async (req, res) => {
 //   }
 // });
 
+// router.get('/download', async (req, res) => {
+//   try {
+//     const url = req.query.url;
+//     const format = req.query.format;
+//     const info = await ytdl.getInfo(url);
+//     const videoTitle = info.videoDetails.title;
+//     const videoFormats = info.formats.filter((format) => format.hasVideo && format.hasAudio);
+//     const videoStream = ytdl(url, { format: format });
+
+//     // Set headers for all available video formats
+//     videoFormats.forEach((format) => {
+//       const videoFileName = `${videoTitle}.${format.container}.replace(/[^a-zA-Z0-9]/g, '_')`;
+//       const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
+//       res.setHeader('Content-Disposition', contentDispositionHeader);
+//       res.setHeader('Content-Type', format.mimeType);
+//       videoStream.pipe(res);
+//     });
+
+//   } catch(error) {
+//     return res.render('VideoConverter', { 
+//       video: null,
+//       title: 'Video Converter And Downloader | Youtube Converter',
+//       message: `Error: ${error.message}`,
+//     });
+//   }
+// });
+
 router.get('/download', async (req, res) => {
   try {
     const url = req.query.url;
-    const format = req.query.format;
+    const formatId = req.query.format;
     const info = await ytdl.getInfo(url);
     const videoTitle = info.videoDetails.title;
     const videoFormats = info.formats.filter((format) => format.hasVideo && format.hasAudio);
-    const videoStream = ytdl(url, { format: format });
 
-    // Set headers for all available video formats
-    videoFormats.forEach((format) => {
-      const videoFileName = `${videoTitle}.${format.container}.replace(/[^a-zA-Z0-9]/g, '_')`;
-      const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
-      res.setHeader('Content-Disposition', contentDispositionHeader);
-      res.setHeader('Content-Type', format.mimeType);
-      videoStream.pipe(res);
-    });
+    // Find the format object based on the user's choice
+    const chosenFormat = videoFormats.find((format) => format.itag === formatId);
+    if (!chosenFormat) {
+      throw new Error(`Invalid format ID: ${formatId}`);
+    }
+
+    const videoStream = ytdl(url, { format: chosenFormat });
+
+    // Set headers for the chosen video format
+    const videoFileName = `${videoTitle}.${chosenFormat.container}.replace(/[^a-zA-Z0-9]/g, '_')`;
+    const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
+    res.setHeader('Content-Disposition', contentDispositionHeader);
+    res.setHeader('Content-Type', chosenFormat.mimeType);
+
+    videoStream.pipe(res);
 
   } catch(error) {
     return res.render('VideoConverter', { 
