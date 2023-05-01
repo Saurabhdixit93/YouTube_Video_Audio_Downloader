@@ -45,7 +45,7 @@
                 <span class="icon">
                   <i class="fas fa-download"></i>
                 </span>
-                <span><%= format.qualityLabel %>, <span style="color: black;"><%= video.title.subString(0,20) %>,</span> <%= format.container %></span>
+                <span><%= format.qualityLabel %>, <span style="color: black;"><%= video.title ? video.title.substring(0, 20) : '' %>,</span> <%= format.container %></span>
               </a>
             </li>
             <br>
