@@ -30,20 +30,31 @@
         </div>
        </form>
        <% if (video) { %>
-        <h2 class="subtitle has-text-centered mt-5">Available formats:</h2>
+        <h2 class="subtitle has-text-centered mt-5"><%= video.title %></h2>
+        <h3 class="subtitle has-text-centered">Available formats:</h3>
         <ul>
-         <% video.formats.forEach(function(format) { %>
-          <li>
-           <a href="/download?format=<%= format.itag %>&url=<%= video.url %>" class="button is-primary is-small">
-            <span class="icon">
-              <i class="fas fa-download"></i>
-            </span>
-            <span><%= format.qualityLabel %>p, <%= format.container.toUpperCase() %></span>
-           </a>
-          </li>
-         <% }) %>
+          <% 
+          let sortedFormats = video.formats.sort((a, b) => b.qualityLabel - a.qualityLabel);
+          let uniqueFormats = [];
+      
+          sortedFormats.forEach(function(format) {
+            if (format.qualityLabel && !uniqueFormats.includes(format.qualityLabel) && format.container) {
+              uniqueFormats.push(format.qualityLabel);
+          %>
+            <li>
+              <a href="/download?format=<%= format.itag %>&url=<%= video.url %>" class="button is-primary is-small">
+                <span class="icon">
+                  <i class="fas fa-download"></i>
+                </span>
+                <span><%= format.qualityLabel %>, <%= format.container %></span>
+              </a>
+            </li>
+          <% 
+            }
+          });
+          %>
         </ul>
-       <% } %>
+      <% } %>
       </div>
      </div>
     </div>
