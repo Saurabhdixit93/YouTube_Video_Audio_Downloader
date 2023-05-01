@@ -141,31 +141,24 @@ router.post('/download', async (req, res) => {
 //     });
 //   }
 // });
-
+// Set up the GET request route to download the selected video format
 router.get('/download', async (req, res) => {
-  try {
+  try{
     const url = req.query.url;
-    const formatId = req.query.format;
+    const format = req.query.format;
     const info = await ytdl.getInfo(url);
     const videoTitle = info.videoDetails.title;
-    const availableFormats = ytdl.filterFormats(info.formats, 'videoandaudio');
-    // const format = availableFormats.find((format) => format.itag === formatId);
-
-    // if (!format) {
-    //   throw new Error('Invalid format ID');
-    // }
-
-    const videoFileName = `${videoTitle}.${availableFormats.container}`;
-    const videoStream = ytdl(url, { format: formatId });
+    const videoFileName =` ${videoTitle}.${format}`;
+    const videoStream = ytdl(url, { format: format });
     const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
     res.setHeader('Content-Disposition', contentDispositionHeader);
     res.setHeader('Content-Type', 'video/mp4');
     videoStream.pipe(res);
-  } catch (error) {
-    return res.render('VideoConverter', {
+  }catch(error){
+    return res.render('VideoConverter', { 
       video: null,
       title: 'Video Converter And Downloader | Youtube Converter',
-      message: `Error when downloading: ${error.message}`,
+      message: `'Error When Downloading' ,${error.message}`
     });
   }
 });
