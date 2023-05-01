@@ -31,14 +31,14 @@
        </form>
        <% if (video) { %>
         <h3 class="subtitle has-text-centered">Available formats:</h3>
-        <ul>
+        <ul style="text-align: center;">
           <% 
-          let sortedFormats = video.formats.sort((a, b) => b.qualityLabel - a.qualityLabel);
-          let uniqueFormats = [];
-      
-          sortedFormats.forEach(function(format) {
-            if (format.qualityLabel && !uniqueFormats.includes(format.qualityLabel) && format.container) {
-              uniqueFormats.push(format.qualityLabel);
+            let sortedFormats = video.formats.sort((a, b) => b.qualityLabel - a.qualityLabel);
+            let uniqueFormats = [];
+        
+            sortedFormats.forEach(function(format) {
+              if (format.qualityLabel && !uniqueFormats.includes(format.qualityLabel) && format.container) {
+                uniqueFormats.push(format.qualityLabel);
           %>
             <li>
               <a href="/download?format=<%= format.itag %>&url=<%= video.url %>" class="button is-primary is-small">
@@ -47,6 +47,7 @@
                 </span>
                 <span><%= format.qualityLabel %>, <span style="color: black;"><%= video.title %>,</span> <%= format.container %></span>
               </a>
+              <br>
             </li>
           <% 
             }
