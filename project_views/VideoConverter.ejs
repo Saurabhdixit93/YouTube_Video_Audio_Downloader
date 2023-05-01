@@ -30,7 +30,6 @@
         </div>
        </form>
        <% if (video) { %>
-        <h2 class="subtitle has-text-centered mt-5"><%= video.title %></h2>
         <h3 class="subtitle has-text-centered">Available formats:</h3>
         <ul>
           <% 
@@ -46,7 +45,7 @@
                 <span class="icon">
                   <i class="fas fa-download"></i>
                 </span>
-                <span><%= format.qualityLabel %>, <%= format.container %></span>
+                <span><%= format.qualityLabel %>, <span style="color: black;"><%= video.title %>,</span> <%= format.container %></span>
               </a>
             </li>
           <% 
