@@ -148,7 +148,7 @@ router.get('/download', async (req, res) => {
     const format = req.query.format;
     const info = await ytdl.getInfo(url);
     const videoTitle = info.videoDetails.title;
-    const videoFileName =` ${videoTitle}.${format}`;
+    const videoFileName = `${videoTitle}.${format}`;
     const videoStream = ytdl(url, { format: format });
     const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
     res.setHeader('Content-Disposition', contentDispositionHeader);
