@@ -7,6 +7,7 @@ dotenv.config();
 const expressLayouts = require('express-ejs-layouts');
 const port = 5000;
 const app = express();
+const fs = require('fs');
 const nodemailer = require('nodemailer');
 app.use(express.urlencoded({extended:true}));
 
@@ -28,6 +29,17 @@ app.set('views' , 'project_views');
 
 app.use('/',require('./routers'));
 
+app.get('/ads.txt' ,(req,res) => {
+    const filepath = __dirname + '/ads.txt';
+    fs.readFile(filepath,'utf8',(err,data) =>{
+        if(err){
+            console.log('Error in txt FIle' , err);
+        }
+        else{
+            return res.type('text/plain').send(data);
+        }
+    });
+});
 ConnectDB().then(() => {
     app.listen(port,() => {
         console.log(`Congratulations Server Started in Port : ${port}`);
