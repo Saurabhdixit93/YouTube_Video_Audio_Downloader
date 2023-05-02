@@ -39,6 +39,35 @@ app.get('/ads.txt' ,(req,res) => {
     });
 }); 
 
+// Define the middleware function
+const addAudioQualitiesToLocals = (req, res, next) => {
+  // Define your audioQualities array here
+  const audioQualities = [
+    { bitrate: '128', extension: 'mp3', mimeType: 'audio/mp3', url: 'https://example.com/audio1.mp3' },
+    { bitrate: '256', extension: 'mp3', mimeType: 'audio/mp3', url: 'https://example.com/audio2.mp3' },
+    { bitrate: '320', extension: 'mp3', mimeType: 'audio/mp3', url: 'https://example.com/audio3.mp3' }
+  ];
+
+  // Add the audioQualities array to res.locals
+  res.locals.audioQualities = audioQualities;
+
+  // Call the next middleware function
+  next();
+};
+
+// Use the middleware function for all requests
+app.use(addAudioQualitiesToLocals);
+
+// Serve the index page
+app.get('/', (req, res) => {
+  return res.render('index',{
+      title: 'YouTube to MP3 Converter | Youtube Converter',
+       message: null
+  });
+});
+
+
+
 app.use('/',require('./routers'));
 
 ConnectDB().then(() => {
