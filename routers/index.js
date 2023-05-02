@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
   return res.render('index',{
       title: 'YouTube to MP3 Converter | Youtube Converter',
        message: null,
-       audioQualities: null
+       audioQualities: []
   });
 });
 
@@ -56,12 +56,12 @@ router.get('/contact-us', (req,res) => {
 
 // for url routes and function-/ _---------_ Audio Converter--------------------------------------// route for downloading audio in different qualities
 
-router.get('/convert', async (req, res) => {
+router.get('/convert-audio', async (req, res) => {
   try {
     const videoUrl = req.query.url;
-    if(!ytdl.validateURL(url)){
+    if(!ytdl.validateURL(videoUrl)){
       return res.render('index',{
-        audioQualities: null,
+        audioQualities: [],
         title: 'Video Converter And Downloader | Youtube Converter',
         message: 'Please Enter A Valid Youtube URL'
       });
@@ -79,7 +79,7 @@ router.get('/convert', async (req, res) => {
     });
 
     return res.render('index', { 
-      audioQualities,
+      audioQualities:audioQualities ,
       title: 'YouTube to MP3 Converter | Youtube Converter',
       message: "Converted Successfull"
     });
@@ -96,7 +96,7 @@ router.get('/convert', async (req, res) => {
 router.get('/download-audio', (req, res) => {
   try{
     const audioUrl = req.query.url;
-    if(!ytdl.validateURL(url)){
+    if(!ytdl.validateURL(audioUrl)){
       return res.render('index',{
         audioQualities: null,
         title: 'Video Converter And Downloader | Youtube Converter',
@@ -139,7 +139,7 @@ router.get('/download-audio', (req, res) => {
 
   // Set up the POST request route to convert the YouTube link to video
 
-router.post('/download', async (req, res) => {
+router.post('/download-video', async (req, res) => {
   const url = req.body.url;
   if(!ytdl.validateURL(url)){
     return res.render('VideoConverter',{
