@@ -56,7 +56,7 @@ router.get('/contact-us', (req,res) => {
 
 // for url routes and function-/ _---------_ Audio Converter--------------------------------------// route for downloading audio in different qualities
 
-router.post('/convert-audio', async (req, res) => {
+router.get('/convert-audio', async (req, res) => {
   try {
     const videoUrl = req.query.url;
     if(!ytdl.validateURL(videoUrl)){
