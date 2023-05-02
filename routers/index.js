@@ -93,7 +93,7 @@ router.get('/convert', async (req, res) => {
 });
 
 
-router.get('/download', (req, res) => {
+router.get('/download-audio', (req, res) => {
   try{
     const audioUrl = req.query.url;
     if(!ytdl.validateURL(url)){
@@ -166,7 +166,7 @@ router.post('/download', async (req, res) => {
 
 
 // Set up the GET request route to download the selected video format
-router.get('/download', async (req, res) => {
+router.get('/download-video', async (req, res) => {
   try{
     const url = req.query.url;
     const format = req.query.format;
