@@ -2,21 +2,36 @@
 
 <section class="section">
   <% if (message) { %>
-    <div class="popup-form" id="myForm">
-      <div class="popup-content">
-        <div class="close-button" onclick="closeForm()">&times;</div>
-        <h2> <%= message %></h2>
-      </div>
+  <div class="popup-form" id="myForm">
+    <div class="popup-content">
+      <div class="close-button" onclick="closeForm()">&times;</div>
+      <h2> <%= message %></h2>
     </div>
-    <% } %>
+  </div>
+<% } %>
   <div class="container">
-    <h1 class="title has-text-centered mb-5">YouTube to MP3 Converter</h1>
-
-    <form action="/convert-to-audio" method="POST">
-      <div class="field has-addons">
-        <div class="control is-expanded">
+    <h1 class="title">YouTube to Audio Converter</h1>
+    <form action="/convert-audio" method="POST">
+      <div class="field">
+        <label class="label">YouTube Video URL</label>
+        <div class="control">
           <input class="input" type="text" name="url" placeholder="Enter YouTube video URL" required>
         </div>
+      </div>
+      <div class="field">
+        <label class="label">Audio Quality</label>
+        <div class="control">
+          <div class="select">
+            <select name="quality" required>
+              <option value="128">128 kbps</option>
+              <option value="192">192 kbps</option>
+              <option value="256">256 kbps</option>
+              <option value="320">320 kbps</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="field">
         <div class="control">
           <button class="button is-primary" type="submit">
             <span class="icon">
@@ -27,27 +42,22 @@
         </div>
       </div>
     </form>
-     
-     <% if (files && files.length > 0) { %>
-      <h2 class="title is-4 mt-5 mb-3">Converted MP3 Files:</h2>
-      <ul class="list">
-        <% files.forEach(file => { %>
-          <li class="list-item is-flex is-justify-content-between is-align-items-center">
-            <span><%= file %></span>
-            <a href="/<%= file %>" download class="button is-primary">
-              <span class="icon">
-                <i class="fas fa-download"></i>
-              </span>
-              <span>Download</span>
-            </a>
-          </li>
-          <br>
-        <% }) %>
-      </ul>
-    <% } else { %>
-      <p class="has-text-centered mt-5" style="color: black;">No files found.</p>
+    <% if (audioFiles && audioFiles.length > 0) { %>
+      <h2 class="subtitle">Download Audio</h2>
+      <% audioFiles.forEach(function(file) { %>
+        <div class="card">
+          <div class="card-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="title is-4"><%= file.filename %></p>
+              </div>
+            </div>
+            <div class="content">
+              <a href="/download-audio?filename=<%= file.filename %>" class="button is-primary">Download</a>
+            </div>
+          </div>
+        </div>
+      <% }); %>
     <% } %>
-
-
   </div>
 </section>
