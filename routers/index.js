@@ -59,6 +59,13 @@ router.get('/contact-us', (req,res) => {
 router.get('/convert', async (req, res) => {
   try {
     const videoUrl = req.query.url;
+    if(!ytdl.validateURL(url)){
+      return res.render('index',{
+        audioQualities: null,
+        title: 'Video Converter And Downloader | Youtube Converter',
+        message: 'Please Enter A Valid Youtube URL'
+      });
+    }
     const audioFormats = await ytdl.getBasicInfo(videoUrl);
     const audioQualities = audioFormats.formats.filter((format) => {
       return format.mimeType.includes('audio/') && format.audioBitrate;
@@ -89,6 +96,13 @@ router.get('/convert', async (req, res) => {
 router.get('/download', (req, res) => {
   try{
     const audioUrl = req.query.url;
+    if(!ytdl.validateURL(url)){
+      return res.render('index',{
+        audioQualities: null,
+        title: 'Video Converter And Downloader | Youtube Converter',
+        message: 'Please Enter A Valid Youtube URL'
+      });
+    }
     const audioExtension = req.query.extension;
     const audioQuality = req.query.quality;
 
@@ -113,6 +127,7 @@ router.get('/download', (req, res) => {
     });
   }
 });
+
 
 
 
