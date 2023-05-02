@@ -37,19 +37,7 @@ app.get('/ads.txt' ,(req,res) => {
             return res.type('text/plain').send(data);
         }
     });
-}); 
-
-// Serve the index page
-app.get('/', (req, res) => {
-  return res.render('index',{
-      title: 'YouTube to MP3 Converter | Youtube Converter',
-       message: null,
-       audioQualities: null
-  });
 });
-
-
-
 app.use('/',require('./routers'));
 
 ConnectDB().then(() => {
