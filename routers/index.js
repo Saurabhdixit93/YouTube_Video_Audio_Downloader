@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const ytdl = require('ytdl-core');
-// const axios = require('axios');
-// const ytdlAudio = require('youtube-dl-exec');
-// const ffmpeg = require('ffmpeg');
 const nodemailer = require('nodemailer');
 const UserContact = require('../model/UserContact');
 const ejs = require('ejs');
@@ -15,6 +12,14 @@ const ffmpegStatic = require('ffmpeg-static');
 const { spawn } = require('child_process');
 
 
+// Serve the index page
+router.get('/', (req, res) => {
+  return res.render('index',{
+      title: 'YouTube to MP3 Converter | Youtube Converter',
+       message: null,
+       audioQualities: null
+  });
+});
 
 
 router.get('/video-downloader', (req ,res) => {
