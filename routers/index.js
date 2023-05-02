@@ -371,7 +371,7 @@ router.get('/download', async (req, res) => {
       .audioCodec('aac')
       .format('mp4')
       .on('error', (error) => {
-        console.error(`Error merging audio and video streams: ${error})`;
+        console.error(`Error merging audio and video streams: ${error}`);
         return res.render('VideoConverter', { 
           video: null,
           title: 'Video Converter And Downloader | Youtube Converter',
