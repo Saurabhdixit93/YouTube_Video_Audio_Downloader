@@ -1,5 +1,40 @@
 <title><%= title %></title>
- <% if (message) { %>
+
+<style>
+  table {
+  margin-top: 2rem;
+}
+
+th, td {
+  vertical-align: middle !important;
+}
+
+th:first-child {
+  width: 75%;
+}
+
+th:last-child {
+  width: 25%;
+}
+
+@media only screen and (max-width: 600px) {
+  th:first-child, td:first-child {
+    font-size: 0.75rem;
+  }
+
+  th:last-child, td:last-child {
+    font-size: 0.75rem;
+    padding-left: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem !important;
+    margin-top: 2rem;
+  }
+}
+</style>
+
+<% if (message) { %>
   <div class="popup-form" id="myForm">
     <div class="popup-content">
       <div class="close-button" onclick="closeForm()">&times;</div>
@@ -7,29 +42,32 @@
     </div>
   </div>
 <% } %>
+
 <section class="section">
   <div class="container">
     <h1 class="title">YouTube to Audio Converter</h1>
+
     <form action="/convert-audio" method="post">
       <div class="field">
         <label class="label">YouTube Video URL</label>
         <div class="control">
-          <input class="input" type="text" name="url" placeholder="Enter YouTube video URL" required>
+          <input class="input" type="text" name="url" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" required>
         </div>
       </div>
+
       <div class="field">
         <label class="label">Audio Quality</label>
         <div class="control">
           <div class="select">
             <select name="quality" required>
-              <option value="">Select audio quality</option>
-              <option value="96">Low (96 kbps)</option>
-              <option value="128">Medium (128 kbps)</option>
-              <option value="192">High (192 kbps)</option>
+              <option value="128">128 kbps</option>
+              <option value="192">192 kbps</option>
+              <option value="320">320 kbps</option>
             </select>
           </div>
         </div>
       </div>
+
       <div class="field">
         <div class="control">
           <button class="button is-primary" type="submit">
@@ -44,18 +82,18 @@
 
     <% if (audioFiles.length > 0) { %>
       <h2 class="subtitle">Converted Audio Files:</h2>
-      <table class="table">
+      <table class="table is-striped is-hoverable">
         <thead>
           <tr>
             <th>Filename</th>
-            <th>Download</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          <% audioFiles.forEach(audioFile => { %>
+          <% audioFiles.forEach(audio => { %>
             <tr>
-              <td><%= audioFile.filename %></td>
-              <td><a href="/download-audio?filename=<%= audioFile.filename %>" class="button is-primary">Download</a></td>
+              <td><%= audio.filename %></td>
+              <td><a href="/download-audio?filename=<%= audio.filename %>" class="button is-primary">Download</a></td>
             </tr>
           <% }); %>
         </tbody>
