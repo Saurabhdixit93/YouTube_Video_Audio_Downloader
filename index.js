@@ -27,8 +27,6 @@ app.use(expressLayouts);
 app.set('view engine' , 'ejs');
 app.set('views' , 'project_views');
 
-app.use('/',require('./routers'));
-
 app.get('/ads.txt' ,(req,res) => {
     const filepath = __dirname + '/ads.txt';
     fs.readFile(filepath,'utf8',(err,data) =>{
@@ -39,7 +37,10 @@ app.get('/ads.txt' ,(req,res) => {
             return res.type('text/plain').send(data);
         }
     });
-});
+}); 
+
+app.use('/',require('./routers'));
+
 ConnectDB().then(() => {
     app.listen(port,() => {
         console.log(`Congratulations Server Started in Port : ${port}`);
