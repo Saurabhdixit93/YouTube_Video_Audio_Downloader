@@ -195,7 +195,7 @@ router.post('/convert-audio', async (req, res) => {
       res.redirect('/?audioFiles=' + encodeURIComponent(JSON.stringify([{filename: filename}])));
     });
   }catch(error){
-    console.log('An error occurred: ' + err.message);
+    console.log('An error occurred: ' + error.message);
     return res.render('index', {
       audioFiles: req.query.audioFiles ? JSON.parse(req.query.audioFiles) : [],
       title: 'YouTube to MP3 Converter | Youtube Converter',
@@ -213,7 +213,7 @@ router.get('/download-audio', (req, res) => {
 
     res.download(filepath);
   }catch(error){
-    console.log('An error occurred: ' + err.message);
+    console.log('An error occurred: ' + error.message);
     return res.render('index', {
       audioFiles: req.query.audioFiles ? JSON.parse(req.query.audioFiles) : [],
       title: 'YouTube to MP3 Converter | Youtube Converter',
