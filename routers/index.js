@@ -434,6 +434,45 @@ router.post('/download', async (req, res) => {
 //   }
 // });
 
+// router.get('/download', async (req, res) => {
+//   try {
+//     const url = req.query.url;
+//     const format = req.query.format;
+//     const info = await ytdl.getInfo(url);
+//     const videoTitle = info.videoDetails.title;
+//     const videoFileName = `${videoTitle}.${format}`;
+
+//     const videoReadableStream = ytdl(url, { quality: 'highestvideo' });
+//     const audioReadableStream = ytdl(url);
+
+//     const command = ffmpeg()
+//       .addInput(videoReadableStream)
+//       .addInput(audioReadableStream)
+//       .videoCodec('copy')
+//       .audioCodec('aac')
+//       .format('mp4')
+//       .on('error', (error) => {
+//         console.error(`Error merging audio and video streams: ${error}`);
+//         return res.render('VideoConverter', { 
+//           video: null,
+//           title: 'Video Converter And Downloader | Youtube Converter',
+//           message:` Error When Downloading: ${error.message}`
+//         });
+//       });
+
+//     res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`);
+//     res.setHeader('Content-Type', 'video/mp4');
+//     command.pipe(res);
+//   } catch (error) {
+//     console.error(`Error getting video info: ${error}`);
+//     return res.render('VideoConverter', { 
+//       video: null,
+//       title: 'Video Converter And Downloader | Youtube Converter',
+//       message: `Error When Downloading: ${error.message}`
+//     });
+//   }
+// });
+
 router.get('/download', async (req, res) => {
   try {
     const url = req.query.url;
@@ -442,27 +481,41 @@ router.get('/download', async (req, res) => {
     const videoTitle = info.videoDetails.title;
     const videoFileName = `${videoTitle}.${format}`;
 
+    const videoWritableStream = fs.createWriteStream(`${videoTitle}.mp4`);
+    const audioWritableStream = fs.createWriteStream(`${videoTitle}.mp3`);
+
     const videoReadableStream = ytdl(url, { quality: 'highestvideo' });
     const audioReadableStream = ytdl(url);
 
-    const command = ffmpeg()
-      .addInput(videoReadableStream)
-      .addInput(audioReadableStream)
-      .videoCodec('copy')
-      .audioCodec('aac')
-      .format('mp4')
-      .on('error', (error) => {
-        console.error(`Error merging audio and video streams: ${error}`);
-        return res.render('VideoConverter', { 
-          video: null,
-          title: 'Video Converter And Downloader | Youtube Converter',
-          message:` Error When Downloading: ${error.message}`
-        });
-      });
+    videoReadableStream.pipe(videoWritableStream);
+    audioReadableStream.pipe(audioWritableStream);
 
-    res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`);
-    res.setHeader('Content-Type', 'video/mp4');
-    command.pipe(res);
+    videoWritableStream.on('close', () => {
+      const command = ffmpeg()
+        .addInput(`${videoTitle}.mp4`)
+        .addInput(`${videoTitle}.mp3`)
+        .videoCodec('copy')
+        .audioCodec('aac')
+        .format('mp4')
+        .on('error', (error) => {
+          console.error(`Error merging audio and video streams: ${error}`);
+          fs.unlinkSync(`${videoTitle}.mp4`);
+          fs.unlinkSync(`${videoTitle}.mp3`);
+          return res.render('VideoConverter', { 
+            video: null,
+            title: 'Video Converter And Downloader | Youtube Converter',
+            message: `Error When Downloading: ${error.message}`
+          });
+        })
+        .on('end', () => {
+          fs.unlinkSync(`${videoTitle}.mp4`);
+          fs.unlinkSync(`${videoTitle}.mp3`);
+        });
+
+      res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`);
+      res.setHeader('Content-Type', 'video/mp4');
+      command.pipe(res);
+    });
   } catch (error) {
     console.error(`Error getting video info: ${error}`);
     return res.render('VideoConverter', { 
@@ -472,6 +525,11 @@ router.get('/download', async (req, res) => {
     });
   }
 });
+
+
+
+
+
 // email template load from viewfiles for password reset
 const successEmail = fs.readFileSync('./project_views/ContactSuccess/SuccessEmail.ejs','utf-8');
 
