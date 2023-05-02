@@ -67,10 +67,48 @@ router.get('/contact-us', (req,res) => {
 
 // for url routes and function---------------------------------------// route for downloading audio in different qualities
 
-router.post('/convert-to-audio', async (req, res) => {
+// router.post('/convert-to-audio', async (req, res) => {
     
 
-  const { url } = req.body;
+//   const { url } = req.body;
+//   if (!ytdl.validateURL(url)) {
+//     return res.render('index', {
+//       files: [],
+//       title: 'YouTube to MP3 Converter | Youtube Converter',
+//       message: 'Invalid YouTube URL.'
+//     });
+//   }
+//   const info = await ytdl.getInfo(url);
+//   const title = info.videoDetails.title.replace(/[^\w\s]/gi, '');
+//   const formats = ytdl.filterFormats(info.formats, 'audioonly');
+//   const tasks = [];
+//   formats.forEach(format => {
+//     const filePath = path.join(__dirname, 'public', 'audio', `${title}_${format.audioBitrate}kbps.mp3`);
+//     tasks.push(new Promise((resolve, reject) => {
+//       ffmpeg(ytdl(url, { format }))
+//         .audioBitrate(format.audioBitrate)
+//         .save(filePath)
+//         .on('end', () => resolve())
+//         .on('error', (err) => reject(err))
+//     }));
+//   });
+//   try {
+//     await Promise.all(tasks);
+//     res.redirect('/');
+//   } catch (err) {
+//     console.log('An error occurred: ' + err.message);
+//     return res.render('index', {
+//       files: null,
+//       title: 'YouTube to MP3 Converter | Youtube Converter',
+//       message: 'An error occurred while processing the video.'
+//     });
+//   }
+// });
+
+router.post('/convert-to-audio', async (req, res) => {
+     
+try {
+  const { url } = req.body.url;
   if (!ytdl.validateURL(url)) {
     return res.render('index', {
       files: [],
@@ -79,28 +117,50 @@ router.post('/convert-to-audio', async (req, res) => {
     });
   }
   const info = await ytdl.getInfo(url);
-  const title = info.videoDetails.title.replace(/[^\w\s]/gi, '');
   const formats = ytdl.filterFormats(info.formats, 'audioonly');
-  const tasks = [];
-  formats.forEach(format => {
-    const filePath = path.join(__dirname, 'public', 'audio', `${title}_${format.audioBitrate}kbps.mp3`);
-    tasks.push(new Promise((resolve, reject) => {
-      ffmpeg(ytdl(url, { format }))
-        .audioBitrate(format.audioBitrate)
-        .save(filePath)
-        .on('end', () => resolve())
-        .on('error', (err) => reject(err))
-    }));
+
+  // Create an array to store the filenames
+  const files = [];
+
+  // Loop through each format and download the audio file
+  for (let i = 0; i < formats.length; i++) {
+    const format = formats[i];
+    const filename = `${info.videoDetails.title}_${format.audioBitrate}kbps.mp3`;
+    const filepath = `/public/audio/${filename}`;
+    const file = fs.createWriteStream(filepath);
+
+    // Use ytdl to download the audio file and pipe it to the file stream
+    const stream = ytdl(url, { filter: 'audioonly'});
+    stream.pipe(file);
+
+    // Wait for the download to finish before pushing the filename to the array
+    await new Promise(resolve => {
+      file.on('finish', () => {
+        file.close();
+        files.push(filename);
+        resolve();
+      });
+    });
+  }
+
+  // Render the EJS template with the list of converted files
+  return res.render('index', { 
+    files: files || [] ,
+    title: 'YouTube to MP3 Converter | Youtube Converter',,
+    message: 'Converted Successfully, Please Download'
   });
-  try {
-    await Promise.all(tasks);
-    res.redirect('/');
+ 
   } catch (err) {
+    let files = [];
+    const dirPath = path.join(__dirname , 'public', 'audio');
+    if(fs.existsSync(dirPath)){
+      files = fs.readdirSync(dirPath);
+    }
     console.log('An error occurred: ' + err.message);
     return res.render('index', {
-      files: null,
+      files,
       title: 'YouTube to MP3 Converter | Youtube Converter',
-      message: 'An error occurred while processing the video.'
+      message: `An error occurred while processing the video.${ err.message}`
     });
   }
 });
