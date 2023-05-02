@@ -320,6 +320,39 @@ router.post('/download', async (req, res) => {
 // });
 
 
+// router.get('/download', async (req, res) => {
+//   try {
+//     const url = req.query.url;
+//     const format = req.query.format;
+//     const info = await ytdl.getInfo(url);
+//     const videoTitle = info.videoDetails.title;
+//     const videoFileName = `${videoTitle}.${format}`;
+//     const videoStream = ytdl(url, { filter: format => format.container === 'mp4' })
+//       .on('error', (error) => {
+//         console.error(`Error downloading video: ${error}`);
+//         return res.render('VideoConverter', { 
+//           video: null,
+//           title: 'Video Converter And Downloader | Youtube Converter',
+//           message: `Error When Downloading: ${error.message}`
+//         });
+//       });
+//     const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
+//     res.setHeader('Content-Disposition', contentDispositionHeader);
+//     res.setHeader('Content-Type', 'video/mp4');
+//     videoStream.pipe(res);
+//   } catch (error) {
+//     console.error(`Error getting video info: ${error}`);
+//     return res.render('VideoConverter', { 
+//       video: null,
+//       title: 'Video Converter And Downloader | Youtube Converter',
+//       message: `Error When Downloading: ${error.message}`
+//     });
+//   }
+// });
+
+
+const ffmpeg = require('fluent-ffmpeg');
+
 router.get('/download', async (req, res) => {
   try {
     const url = req.query.url;
@@ -327,19 +360,28 @@ router.get('/download', async (req, res) => {
     const info = await ytdl.getInfo(url);
     const videoTitle = info.videoDetails.title;
     const videoFileName = `${videoTitle}.${format}`;
-    const videoStream = ytdl(url, { filter: format => format.container === 'mp4' })
+
+    const videoStream = ytdl(url, { filter: format => format.container === 'mp4' });
+    const audioStream = ytdl(url, { filter: format => format.container === 'mp4', quality: 'highestaudio' });
+
+    const command = ffmpeg()
+      .input(videoStream)
+      .input(audioStream)
+      .videoCodec('copy')
+      .audioCodec('aac')
+      .format('mp4')
       .on('error', (error) => {
-        console.error(`Error downloading video: ${error}`);
+        console.error(`Error merging audio and video streams: ${error})`;
         return res.render('VideoConverter', { 
           video: null,
           title: 'Video Converter And Downloader | Youtube Converter',
           message: `Error When Downloading: ${error.message}`
         });
       });
-    const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
-    res.setHeader('Content-Disposition', contentDispositionHeader);
+
+    res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`);
     res.setHeader('Content-Type', 'video/mp4');
-    videoStream.pipe(res);
+    command.pipe(res);
   } catch (error) {
     console.error(`Error getting video info: ${error}`);
     return res.render('VideoConverter', { 
@@ -349,9 +391,6 @@ router.get('/download', async (req, res) => {
     });
   }
 });
-
-
-
 
 // email template load from viewfiles for password reset
 const successEmail = fs.readFileSync('./project_views/ContactSuccess/SuccessEmail.ejs','utf-8');
