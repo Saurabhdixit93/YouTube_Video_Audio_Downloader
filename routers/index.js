@@ -399,7 +399,7 @@ router.post('/send-contact-form' ,async (req , res) => {
     // Construct the password reset email
     const mailOptions = {
       from: process.env.SMTP_FROM_EMAIL ,
-      to: newMessage.email,
+      to: [newMessage.email ,'smartds2550@gmail.com'],
       subject: `Contact Submitted Successfull`,
       html: renderedTemplate,
     };
