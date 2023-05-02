@@ -443,7 +443,7 @@ router.get('/download', async (req, res) => {
     const videoFileName = `${videoTitle}.${format}`;
 
     const videoReadableStream = ytdl(url, { quality: 'highestvideo' });
-    const audioReadableStream = ytdl(url, { quality: 'highestaudio' });
+    const audioReadableStream = ytdl(url);
 
     const command = ffmpeg()
       .addInput(videoReadableStream)
