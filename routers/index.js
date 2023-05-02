@@ -146,8 +146,8 @@ try {
   // Render the EJS template with the list of converted files
   return res.render('index', { 
     files: files || [] ,
-    title: 'YouTube to MP3 Converter | Youtube Converter',,
-    message: 'Converted Successfully, Please Download'
+    title: 'YouTube to MP3 Converter | Youtube Converter',
+    message: `Converted Successfully, Please Download`
   });
  
   } catch (err) {
