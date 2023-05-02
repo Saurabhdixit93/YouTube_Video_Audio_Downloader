@@ -108,7 +108,7 @@ router.get('/contact-us', (req,res) => {
 router.post('/convert-to-audio', async (req, res) => {
      
 try {
-  const { url } = req.body.url;
+  const { url } = req.body;
   if (!ytdl.validateURL(url)) {
     return res.render('index', {
       files: [],
