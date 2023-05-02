@@ -28,7 +28,7 @@
       </div>
     </form>
 
-    <% if (files.length) { %>
+    <% if (files && files.length > 0) { %>
       <h2 class="title is-4 mt-5 mb-3">Converted MP3 Files:</h2>
       <ul class="list">
         <% files.forEach(file => { %>
@@ -41,8 +41,11 @@
               <span>Download</span>
             </a>
           </li>
+          <br>
         <% }) %>
       </ul>
+    <% } else { %>
+      <p class="has-text-centered mt-5" style="color: black;">No files found.</p>
     <% } %>
   </div>
 </section>
