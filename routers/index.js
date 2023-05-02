@@ -395,6 +395,45 @@ router.post('/download', async (req, res) => {
 // });
 
 
+// router.get('/download', async (req, res) => {
+//   try {
+//     const url = req.query.url;
+//     const format = req.query.format;
+//     const info = await ytdl.getInfo(url);
+//     const videoTitle = info.videoDetails.title;
+//     const videoFileName = `${videoTitle}.${format}`;
+
+//     const videoReadableStream = await ytdl(url, { quality: 'highestvideo' });
+//     const audioReadableStream = await ytdl(url, { quality: 'highestaudio' });
+
+//     const command = ffmpeg()
+//       .input(videoReadableStream)
+//       .input(audioReadableStream)
+//       .videoCodec('copy')
+//       .audioCodec('aac')
+//       .format('mp4')
+//       .on('error', (error) => {
+//         console.error(`Error merging audio and video streams: ${error}`);
+//         return res.render('VideoConverter', { 
+//           video: null,
+//           title: 'Video Converter And Downloader | Youtube Converter',
+//           message: `Error When Downloading: ${error.message}`
+//         });
+//       });
+
+//     res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`);
+//     res.setHeader('Content-Type', 'video/mp4');
+//     command.pipe(res);
+//   } catch (error) {
+//     console.error(`Error getting video info: ${error}`);
+//     return res.render('VideoConverter', { 
+//       video: null,
+//       title: 'Video Converter And Downloader | Youtube Converter',
+//       message:` Error When Downloading: ${error.message}`
+//     });
+//   }
+// });
+
 router.get('/download', async (req, res) => {
   try {
     const url = req.query.url;
@@ -403,12 +442,12 @@ router.get('/download', async (req, res) => {
     const videoTitle = info.videoDetails.title;
     const videoFileName = `${videoTitle}.${format}`;
 
-    const videoReadableStream = await ytdl(url, { quality: 'highestvideo' });
-    const audioReadableStream = await ytdl(url, { quality: 'highestaudio' });
+    const videoReadableStream = ytdl(url, { quality: 'highestvideo' });
+    const audioReadableStream = ytdl(url, { quality: 'highestaudio' });
 
     const command = ffmpeg()
-      .input(videoReadableStream)
-      .input(audioReadableStream)
+      .addInput(videoReadableStream)
+      .addInput(audioReadableStream)
       .videoCodec('copy')
       .audioCodec('aac')
       .format('mp4')
@@ -417,7 +456,7 @@ router.get('/download', async (req, res) => {
         return res.render('VideoConverter', { 
           video: null,
           title: 'Video Converter And Downloader | Youtube Converter',
-          message: `Error When Downloading: ${error.message}`
+          message:` Error When Downloading: ${error.message}`
         });
       });
 
@@ -429,11 +468,10 @@ router.get('/download', async (req, res) => {
     return res.render('VideoConverter', { 
       video: null,
       title: 'Video Converter And Downloader | Youtube Converter',
-      message:` Error When Downloading: ${error.message}`
+      message: `Error When Downloading: ${error.message}`
     });
   }
 });
-
 // email template load from viewfiles for password reset
 const successEmail = fs.readFileSync('./project_views/ContactSuccess/SuccessEmail.ejs','utf-8');
 
