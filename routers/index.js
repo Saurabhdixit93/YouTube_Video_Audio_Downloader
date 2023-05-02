@@ -11,7 +11,7 @@ const ejs = require('ejs');
 const path = require('path');
 // Set YTDL_NO_UPDATE to disable update check for all uses of ytdl-core
 process.env.YTDL_NO_UPDATE = '1';
-
+const cheerio = require('cheerio');
 
 // Convert YouTube video to audio using youtube-audio-downloader
 // const convertToAudio = async (videoUrl, quality) => {
@@ -172,34 +172,65 @@ router.get('/contact-us', (req,res) => {
 //   }
 // });
 
+// router.get('/download-audio' , async (req, res)  => {
+//   try {
+//     const url = req.query.url;
+//     const quality = req.query.quality || '128';
+
+//     const response = await axios.get(`https://www.y2mate.com/mates/en68/analyze/ajax`, {
+//       params: {
+//         url: url,
+//         q_auto: 0,
+//         ajax: 1,
+//         form: '',
+//         hq: quality,
+//         lang: 'en'
+//       },
+//       headers: {
+//         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299'
+//       }
+//     });
+
+//     const downloadUrl = response.data.links.find(link => link.q === quality).dlink;
+
+//     return res.redirect(downloadUrl);
+//   } catch (err) {
+//     console.error(err ,'Error In Foem');
+//     res.status(500).send('An error occurred');
+//   }
+// });
+
+
 router.get('/download-audio' , async (req, res)  => {
-  try {
-    const url = req.query.url;
-    const quality = req.query.quality || '128';
-
-    const response = await axios.get(`https://www.y2mate.com/mates/en68/analyze/ajax`, {
-      params: {
+    try {
+      const url = req.query.url;
+      const quality = req.query.quality || '128';
+  
+      const response = await axios.post('https://www.y2mate.com/mates/convert', {
         url: url,
-        q_auto: 0,
-        ajax: 1,
-        form: '',
-        hq: quality,
-        lang: 'en'
-      },
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299'
+        format: 'mp3',
+        quality: quality
+      }, {
+        headers: {
+          'Referer': 'https://www.y2mate.com/',
+          'Origin': 'https://www.y2mate.com',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        }
+      });
+  
+      const $ = cheerio.load(response.data.result);
+      const downloadUrl = $('a').attr('href');
+  
+      if (!downloadUrl) {
+        throw new Error('Download link not found');
       }
-    });
-
-    const downloadUrl = response.data.links.find(link => link.q === quality).dlink;
-
-    return res.redirect(downloadUrl);
+      res.redirect(downloadUrl);
   } catch (err) {
     console.error(err ,'Error In Foem');
     res.status(500).send('An error occurred');
   }
 });
-
 // router.post('/convert-audio', async (req, res) => {
 //   try{
 //     const { url, quality } = req.body;
