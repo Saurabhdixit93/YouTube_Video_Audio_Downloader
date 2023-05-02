@@ -1,39 +1,5 @@
 <title><%= title %></title>
 
-<style>
-  table {
-  margin-top: 2rem;
-}
-
-th, td {
-  vertical-align: middle !important;
-}
-
-th:first-child {
-  width: 75%;
-}
-
-th:last-child {
-  width: 25%;
-}
-
-@media only screen and (max-width: 600px) {
-  th:first-child, td:first-child {
-    font-size: 0.75rem;
-  }
-
-  th:last-child, td:last-child {
-    font-size: 0.75rem;
-    padding-left: 0.5rem;
-  }
-
-  .subtitle {
-    font-size: 1rem !important;
-    margin-top: 2rem;
-  }
-}
-</style>
-
 <% if (message) { %>
   <div class="popup-form" id="myForm">
     <div class="popup-content">
@@ -47,7 +13,7 @@ th:last-child {
   <div class="container">
     <h1 class="title">YouTube to Audio Converter</h1>
 
-    <form action="/convert-audio" method="post">
+    <form action="/download-audio" method="get">
       <div class="field">
         <label class="label">YouTube Video URL</label>
         <div class="control">
@@ -59,11 +25,12 @@ th:last-child {
         <label class="label">Audio Quality</label>
         <div class="control">
           <div class="select">
-             <select name="quality"  required>
-                <option value="128">Low (128 kbps)</option>
-                <option value="192">Medium (192 kbps)</option>
-                <option value="320">High (320 kbps)</option>
-              </select>
+            <select name="quality">
+              <option value="128">Low (128 kbps)</option>
+              <option value="192">Medium (192 kbps)</option>
+              <option value="256">High (256 kbps)</option>
+              <option value="320">Top (320 kbps)</option>
+            </select>
           </div>
         </div>
       </div>
@@ -79,25 +46,5 @@ th:last-child {
         </div>
       </div>
     </form>
-
-    <% if (audioFiles.length > 0) { %>
-      <h2 class="subtitle">Converted Audio Files:</h2>
-      <table class="table is-striped is-hoverable">
-        <thead>
-          <tr>
-            <th>Filename</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% audioFiles.forEach(audio => { %>
-            <tr>
-              <td><%= audio.filename %></td>
-              <td><a href="/download-audio?filename=<%= audio.filename %>" class="button is-primary">Download</a></td>
-            </tr>
-          <% }); %>
-        </tbody>
-      </table>
-    <% } %>
   </div>
 </section>
