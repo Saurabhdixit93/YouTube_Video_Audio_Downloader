@@ -319,8 +319,7 @@ router.get('/contact-us', (req,res) => {
 
 router.post('/convert-audio', (req, res) => {
   try{
-    const url = req.body.url;
-    const quality = req.body.quality;
+    const { url , quality } = req.body;
 
     // Validate YouTube video URL
     if (!ytdl.validateURL(url)) {
