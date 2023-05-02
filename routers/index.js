@@ -298,27 +298,57 @@ router.post('/download', async (req, res) => {
 // });
 
 // Set up the GET request route to download the selected video format
+// router.get('/download', async (req, res) => {
+//   try{
+//     const url = req.query.url;
+//     const format = req.query.format;
+//     const info = await ytdl.getInfo(url);
+//     const videoTitle = info.videoDetails.title;
+//     const videoFileName = `${videoTitle}.${format}`;
+//     const videoStream = ytdl(url, { format: format });
+//     const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
+//     res.setHeader('Content-Disposition', contentDispositionHeader);
+//     res.setHeader('Content-Type', 'video/mp4');
+//     videoStream.pipe(res);
+//   }catch(error){
+//     return res.render('VideoConverter', { 
+//       video: null,
+//       title: 'Video Converter And Downloader | Youtube Converter',
+//       message: `'Error When Downloading' ,${error.message}`
+//     });
+//   }
+// });
+
+
 router.get('/download', async (req, res) => {
-  try{
+  try {
     const url = req.query.url;
     const format = req.query.format;
     const info = await ytdl.getInfo(url);
     const videoTitle = info.videoDetails.title;
     const videoFileName = `${videoTitle}.${format}`;
-    const videoStream = ytdl(url, { format: format });
+    const videoStream = ytdl(url, { filter: format => format.container === 'mp4' })
+      .on('error', (error) => {
+        console.error(`Error downloading video: ${error}`);
+        return res.render('VideoConverter', { 
+          video: null,
+          title: 'Video Converter And Downloader | Youtube Converter',
+          message: `Error When Downloading: ${error.message}`
+        });
+      });
     const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
     res.setHeader('Content-Disposition', contentDispositionHeader);
     res.setHeader('Content-Type', 'video/mp4');
     videoStream.pipe(res);
-  }catch(error){
+  } catch (error) {
+    console.error(`Error getting video info: ${error}`);
     return res.render('VideoConverter', { 
       video: null,
       title: 'Video Converter And Downloader | Youtube Converter',
-      message: `'Error When Downloading' ,${error.message}`
+      message: `Error When Downloading: ${error.message}`
     });
   }
 });
-
 
 
 
