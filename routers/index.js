@@ -9,7 +9,6 @@ const ejs = require('ejs');
 const path = require('path');
 // Set YTDL_NO_UPDATE to disable update check for all uses of ytdl-core
 process.env.YTDL_NO_UPDATE = '1';
-const audioFiles = [];
 
 // router.get('/', async (req, res) => {
 //   let files = [];
@@ -32,26 +31,35 @@ const audioFiles = [];
 // });
 
 
-router.get('/', async (req, res) => {
+
+// router.get('/', async (req, res) => {
   
-  const dirPath = path.join(__dirname , 'public', 'audio');
-  if(fs.existsSync(dirPath)){
-    audioFiles = fs.readdirSync(dirPath);
-  }
-  if(audioFiles.length === 0){
-    return res.render('index', {
-      audioFiles: audioFiles,
-      title: 'YouTube to MP3 Converter | Youtube Converter',
-      message: 'No Converted File Found Please Convert !'
-    });
-  }
+//   const dirPath = path.join(__dirname , 'public', 'audio');
+//   if(fs.existsSync(dirPath)){
+//     audioFiles = fs.readdirSync(dirPath);
+//   }
+//   if(audioFiles.length === 0){
+//     return res.render('index', {
+//       audioFiles: audioFiles,
+//       title: 'YouTube to MP3 Converter | Youtube Converter',
+//       message: 'No Converted File Found Please Convert !'
+//     });
+//   }
+//   return res.render('index' ,{
+//     title: 'YouTube to MP3 Converter | Youtube Converter',
+//     files,
+//     message: null
+//   });
+// });
+
+router.get('/', async (req, res) => {
+  const audioFiles = req.query.audioFiles ? JSON.parse(req.query.audioFiles) : [];
   return res.render('index' ,{
     title: 'YouTube to MP3 Converter | Youtube Converter',
-    files,
+    audioFiles,
     message: null
   });
 });
-
 
 router.get('/video-downloader', (req ,res) => {
   return res.render('VideoConverter',{
@@ -213,6 +221,102 @@ router.get('/contact-us', (req,res) => {
 // _---------_ Audio Converter
 
 
+// router.post('/convert-audio', (req, res) => {
+//   try{
+//     const url = req.body.url;
+//     const quality = req.body.quality;
+
+//     // Validate YouTube video URL
+//     if (!ytdl.validateURL(url)) {
+//       return res.render('index', {
+//         audioFiles,
+//         title: 'YouTube to MP3 Converter | Youtube Converter',
+//         message: 'Invalid YouTube URL.'
+//       });
+//     }
+
+//     // Get info about YouTube video
+//     ytdl.getInfo(url, (err, info) => {
+//       if (err) {
+//         console.error('Error In Find Info Of Link', err);
+//         return res.render('index', {
+//           audioFiles,
+//           title: 'YouTube to MP3 Converter | Youtube Converter',
+//           message: 'Invalid YouTube URL.'
+//         });
+//       }
+
+//       // Filter out only audio streams of specified quality
+//       const audioStreams = info.formats.filter(format => {
+//         return format.type.startsWith('audio/mp4') && format.audioBitrate === quality;
+//       });
+
+//       // Choose the first audio stream (highest quality) and convert to MP3
+//       const audioStream = audioStreams[0];
+//       const videoTitle = info.player_response.videoDetails.title;
+//       const videoId = info.player_response.videoDetails.videoId;
+//       const outputFilePath = `public/audio/${videoTitle}.mp3`;
+      
+//       ffmpeg(ytdl(url, {
+//         quality: audioStream.itag
+//       }))
+//         .audioBitrate(audioStream.audioBitrate)
+//         .save(outputFilePath)
+//         .on('end', () => {
+//           console.log('Audio conversion complete');
+//           const audioFile = { filename: `${videoTitle}.mp3` };
+//           audioFiles.push(audioFile);
+//           // Redirect to index page with audio files array
+//           return res.redirect('/?audioFiles=' + encodeURIComponent(JSON.stringify(audioFiles)));
+//         })
+//         .on('error', (err) => {
+//           console.error(err+ 'Errror In OnBinding');
+//           return res.render('index', {
+//             audioFiles,
+//             title: 'YouTube to MP3 Converter | Youtube Converter',
+//             message: 'Internal Server Error.'
+//           });
+//         });
+//     });
+//   }catch(error){
+//     console.log('An error occurred: ' + err.message);
+//     return res.render('index', {
+//       audioFiles,
+//       title: 'YouTube to MP3 Converter | Youtube Converter',
+//       message: 'An error occurred while processing the video.'
+//     });
+//   }
+// });
+
+
+// // For Download Audio 
+
+// router.get('/download-audio', (req, res) => {
+//   try{
+//     const filename = req.query.filename;
+//     const filePath = `public/audio/${filename}`;
+
+//     // Check if file exists
+//     if (!fs.existsSync(filePath)) {
+//       console.log('Audio file not found');
+//       return res.redirect('/');
+//     }
+
+//     // Stream the file to the client for download
+//     const fileStream = fs.createReadStream(filePath);
+//     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+//     fileStream.pipe(res);
+//   }catch(error){
+//     console.log('An error occurred: ' + err.message);
+//     return res.render('index', {
+//       audioFiles,
+//       title: 'YouTube to MP3 Converter | Youtube Converter',
+//       message: 'An error occurred while processing the video.'
+//     });
+//   }
+// });
+
+
 router.post('/convert-audio', (req, res) => {
   try{
     const url = req.body.url;
@@ -221,7 +325,7 @@ router.post('/convert-audio', (req, res) => {
     // Validate YouTube video URL
     if (!ytdl.validateURL(url)) {
       return res.render('index', {
-        audioFiles,
+        audioFiles:req.query.audioFiles ? JSON.parse(req.query.audioFiles) : [] ,
         title: 'YouTube to MP3 Converter | Youtube Converter',
         message: 'Invalid YouTube URL.'
       });
@@ -229,51 +333,48 @@ router.post('/convert-audio', (req, res) => {
 
     // Get info about YouTube video
     ytdl.getInfo(url, (err, info) => {
-      if (err) {
-        console.error('Error In Find Info Of Link', err);
-        return res.render('index', {
-          audioFiles,
-          title: 'YouTube to MP3 Converter | Youtube Converter',
-          message: 'Invalid YouTube URL.'
-        });
-      }
-
-      // Filter out only audio streams of specified quality
-      const audioStreams = info.formats.filter(format => {
-        return format.type.startsWith('audio/mp4') && format.audioBitrate === quality;
+    if (err) {
+      console.error(err);
+      return res.render('index', {
+        audioFiles:req.query.audioFiles ? JSON.parse(req.query.audioFiles) : [],
+        title: 'YouTube to MP3 Converter | Youtube Converter',
+        message: 'Error fetching YouTube video info.'
       });
+    }
 
-      // Choose the first audio stream (highest quality) and convert to MP3
-      const audioStream = audioStreams[0];
-      const videoTitle = info.player_response.videoDetails.title;
-      const videoId = info.player_response.videoDetails.videoId;
-      const outputFilePath = `public/audio/${videoTitle}.mp3`;
-      
-      ffmpeg(ytdl(url, {
+    // Filter out only audio streams of specified quality
+    const audioStreams = info.formats.filter(format => {
+      return format.type.startsWith('audio/mp4') && format.audioBitrate === quality;
+    });
+
+    // Choose the first audio stream (highest quality) and convert to MP3
+    const audioStream = audioStreams[0];
+    const videoTitle = info.videoDetails.title.replace(/[^\w]/g, '');
+    const outputFilePath = `public/audio/${videoTitle}.mp3`;
+
+    ffmpeg()
+      .input(ytdl(url, {
         quality: audioStream.itag
       }))
-        .audioBitrate(audioStream.audioBitrate)
-        .save(outputFilePath)
-        .on('end', () => {
-          console.log('Audio conversion complete');
-          const audioFile = { filename: `${videoTitle}.mp3` };
-          audioFiles.push(audioFile);
-          // Redirect to index page with audio files array
-          return res.redirect('/?audioFiles=' + encodeURIComponent(JSON.stringify(audioFiles)));
-        })
-        .on('error', (err) => {
-          console.error(err+ 'Errror In OnBinding');
-          return res.render('index', {
-            audioFiles,
-            title: 'YouTube to MP3 Converter | Youtube Converter',
-            message: 'Internal Server Error.'
-          });
-        });
+      .audioBitrate(audioStream.audioBitrate)
+      .output(outputFilePath)
+      .on('end', () => {
+        console.log('Audio conversion complete');
+        const audioFile = { filename: `${videoTitle}.mp3` };
+
+        // Redirect to index page with audio files array
+        return res.redirect('/?audioFiles=' + encodeURIComponent(JSON.stringify([audioFile])));
+      })
+      .on('error', (err) => {
+        console.error(err.message,'Error On Binding ');
+        return res.redirect('back');
+      })
+      .run();
     });
   }catch(error){
     console.log('An error occurred: ' + err.message);
     return res.render('index', {
-      audioFiles,
+      audioFiles: req.query.audioFiles ? JSON.parse(req.query.audioFiles) : [],
       title: 'YouTube to MP3 Converter | Youtube Converter',
       message: 'An error occurred while processing the video.'
     });
@@ -281,32 +382,29 @@ router.post('/convert-audio', (req, res) => {
 });
 
 
-// For Download Audio 
 
 router.get('/download-audio', (req, res) => {
   try{
     const filename = req.query.filename;
-    const filePath = `public/audio/${filename}`;
+    const filePath = path.join(__dirname, 'public', 'audio', filename);
 
-    // Check if file exists
-    if (!fs.existsSync(filePath)) {
-      console.log('Audio file not found');
-      return res.redirect('/');
-    }
+    // Set response headers for file download
+    res.setHeader('Content-disposition', `attachment; filename=${filename}`);
+    res.setHeader('Content-type', 'audio/mpeg');
 
-    // Stream the file to the client for download
+    // Stream the file to response object
     const fileStream = fs.createReadStream(filePath);
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     fileStream.pipe(res);
   }catch(error){
     console.log('An error occurred: ' + err.message);
     return res.render('index', {
-      audioFiles,
+      audioFiles: req.query.audioFiles ? JSON.parse(req.query.audioFiles) : [],
       title: 'YouTube to MP3 Converter | Youtube Converter',
       message: 'An error occurred while processing the video.'
     });
   }
 });
+
 
 
   // _--_________________
