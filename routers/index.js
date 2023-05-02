@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const fs = require('fs');
-// const ytdl = require('ytdl-core');
+const ytdl = require('ytdl-core');
 const axios = require('axios');
-const ytdl = require('youtube-dl-exec');
+const ytdlAudio = require('youtube-dl-exec');
 const ffmpeg = require('ffmpeg');
 const nodemailer = require('nodemailer');
 const UserContact = require('../model/UserContact');
@@ -15,7 +15,7 @@ process.env.YTDL_NO_UPDATE = '1';
 
 // Convert YouTube video to audio using youtube-audio-downloader
 const convertToAudio = async (videoUrl, quality) => {
-  const audio = await ytdl(videoUrl, {
+  const audio = await ytdlAudio(videoUrl, {
     dumpSingleJson: true,
     noWarnings: true,
     noCallHome: true,
