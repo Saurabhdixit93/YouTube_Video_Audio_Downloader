@@ -263,7 +263,7 @@ router.post('/convert-video', async (req, res) => {
       message: 'Converted Successfully , Please Download'
     });
   }catch(error){
-    console.log('Error Video Converting:' ,error.message);
+    console.log('Error Video Converting:' ,error);
     return res.render('VideoConverter', { 
       video: null,
       title: 'Video Converter And Downloader | Youtube Converter',
