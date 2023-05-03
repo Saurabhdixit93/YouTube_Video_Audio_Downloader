@@ -26,6 +26,6 @@
     "youtube-dl-exec": "^2.2.0",
     "ffmpeg-static": "^4.4.0",
     "child_process": "^1.0.2",
-    "youtube-dl": "^1.17.0"
+    
   }
 }
