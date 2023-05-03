@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const ytdl = require('ytdl-core');
-const youtubedl = require('youtube-dl');
+// const youtubedl = require('youtube-dl');
 const nodemailer = require('nodemailer');
 const UserContact = require('../model/UserContact');
 const ejs = require('ejs');
@@ -148,14 +148,14 @@ router.get('/contact-us', (req,res) => {
 router.get('/convert-audio', async (req, res) => {
   try {
     const videoUrl = req.query.url;
-    if (!youtubedl.validateURL(videoUrl)) {
+    if (!ytdl.validateURL(videoUrl)) {
       return res.render('index', {
         audioQualities: [],
         title: 'Video Converter And Downloader | Youtube Converter',
         message: 'Please Enter A Valid Youtube URL',
       });
     }
-    const audioFormats = await youtubedl.getInfo(videoUrl);
+    const audioFormats = await ytdl.getInfo(videoUrl);
     console.log('Audio Formats', audioFormats.formats); // Add this line to see the audio formats fetched
     const audioQualities = audioFormats.formats
       .filter((format) => {
@@ -201,7 +201,7 @@ router.get('/download-audio', async (req, res) => {
     const videoUrl = req.query.url;
     const audioFormat = req.query.format;
 
-    if (!youtubedl.validateURL(videoUrl)) {
+    if (!ytdl.validateURL(videoUrl)) {
       return res.render('index', {
         audioQualities: [],
         title: 'Video Converter And Downloader | Youtube Converter',
@@ -209,7 +209,7 @@ router.get('/download-audio', async (req, res) => {
       });
     }
 
-    const audioStream = youtubedl(videoUrl, ['--format=' + audioFormat]);
+    const audioStream = ytdl(videoUrl, ['--format=' + audioFormat]);
 
     const fileName = `audio.${audioFormat}`;
     res.setHeader('Content-disposition', `attachment; filename="${fileName}"`);
