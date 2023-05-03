@@ -55,7 +55,9 @@
                   <p class="subtitle is-6"><%= audioQualities[i].mimeType %></p>
                 </div>
                 <div class="column">
-                  <a href="/download-audio?url=<%= audioQualities[i].url %>&extension=<%= audioQualities[i].extension %>" class="button is-success is-rounded is-outlined">
+                  <a href="/download-audio?url=<%= audioQualities[i].url %>
+                   &extension=<%= audioQualities[i].extension %>&format=<%= audioQualities[i].mimeType %>" 
+                    class="button is-success is-rounded is-outlined">
                     <span class="icon">
                       <i class="fas fa-download"></i>
                     </span>
