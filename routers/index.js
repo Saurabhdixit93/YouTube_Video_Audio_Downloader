@@ -133,13 +133,6 @@ router.get('/convert-audio', async (req, res) => {
 router.get('/download-audio', (req, res) => {
   try{
     const audioUrl = req.query.url;
-    if(!ytdl.validateURL(audioUrl)){
-      return res.render('index',{
-        audioQualities: null,
-        title: 'Video Converter And Downloader | Youtube Converter',
-        message: 'Please Enter A Valid Youtube URL'
-      });
-    }
     const audioExtension = req.query.extension;
     const audioQuality = req.query.quality;
 
