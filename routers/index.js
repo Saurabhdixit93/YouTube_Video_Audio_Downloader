@@ -230,38 +230,63 @@ router.get('/download-audio', async (req, res) => {
 
   // Set up the POST request route to convert the YouTube link to video
 
-router.post('/convert-video', async (req, res) => {
-  try{
-    const url = req.body.url;
-    if(!ytdl.validateURL(url)){
-      return res.render('VideoConverter',{
-        video: null,
-        title: 'Video Converter And Downloader | Youtube Converter',
-        message: 'Please Enter A Valid Youtube URL'
+// router.post('/convert-video', async (req, res) => {
+//   try{
+//     const url = req.body.url;
+//     if(!ytdl.validateURL(url)){
+//       return res.render('VideoConverter',{
+//         video: null,
+//         title: 'Video Converter And Downloader | Youtube Converter',
+//         message: 'Please Enter A Valid Youtube URL'
       
-      });
-    }
-    const info = await ytdl.getInfo(url);
-    const video = {
-      title: info.videoDetails.title,
-      url: url,
-      thumbnail: info.videoDetails.thumbnails[0].url,
-      formats: info.formats.filter(format => format.container === 'mp4')
-    };
-    return res.render('VideoConverter', { 
-      video: video,
-      title: 'Video Converter And Downloader | Youtube Converter',
-      message: 'Converted Successfully , Please Download'
-    });
-  }catch(error){
-    console.log('Error Video Converting:' ,error);
-    return res.render('VideoConverter', { 
+//       });
+//     }
+//     const info = await ytdl.getInfo(url);
+//     const video = {
+//       title: info.videoDetails.title,
+//       url: url,
+//       thumbnail: info.videoDetails.thumbnails[0].url,
+//       formats: info.formats.filter(format => format.container === 'mp4')
+//     };
+//     return res.render('VideoConverter', { 
+//       video: video,
+//       title: 'Video Converter And Downloader | Youtube Converter',
+//       message: 'Converted Successfully , Please Download'
+//     });
+//   }catch(error){
+//     console.log('Error Video Converting:' ,error);
+//     return res.render('VideoConverter', { 
+//       video: null,
+//       title: 'Video Converter And Downloader | Youtube Converter',
+//       message: `'Error When Converting' ,${error.message}`
+//     });
+//   }
+// });  // main without formats map
+
+
+router.post('/convert-video', async (req, res) => {
+  const url = req.body.url;
+  if(!ytdl.validateURL(url)){
+    return res.render('VideoConverter',{
       video: null,
       title: 'Video Converter And Downloader | Youtube Converter',
-      message: `'Error When Converting' ,${error.message}`
+      message: 'Please Enter A Valid Youtube URL'
+    
     });
   }
-});  // main without formats map
+  const info = await ytdl.getInfo(url);
+  const video = {
+    title: info.videoDetails.title,
+    url: url,
+    thumbnail: info.videoDetails.thumbnails[0].url,
+    formats: info.formats.filter(format => format.container === 'mp4')
+  };
+  return res.render('VideoConverter', { 
+    video: video,
+    title: 'Video Converter And Downloader | Youtube Converter',
+    message: 'Converted Successfully , Please Download'
+  });
+});
 
 
   // Set up the GET request route to download the selected video format
