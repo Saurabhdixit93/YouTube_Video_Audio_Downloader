@@ -110,27 +110,26 @@ router.get('/download-audio', (req, res) => {
   try{
     const url = req.query.url;
     const extension = req.query.extension;
-    // const info = await ytdl.getInfo(url);
+    const info = await ytdl.getInfo(url);
+    const audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
+    const audio = audioFormats.find((format) => format.container === extension);
+    if (!audio) {
+      return res.render('index', {
+        audioQualities: [],
+        title: 'YouTube to MP3 Converter | Youtube Converter',
+        message: `Cannot find the requested format (${extension})`,
+      });
+    }
     const audioStream = ytdl(url, {
-      quality: 'highestaudio'
+      quality: audio.itag,
+      filter: (format) => format.container === extension,
     });
+    const title = info.videoDetails.title;
+    const fileName = `${title}.${extension}`;
 
-    res.setHeader('Content-Disposition', `attachment; filename=audio.${extension}`);
+    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(fileName)}"`);
     res.setHeader('Content-Type', `audio/${extension}`);
     audioStream.pipe(res);
-
-
-    // const url = req.query.url;
-    // const format = req.query.format;
-    // const info = await ytdl.getInfo(url);
-    // const videoTitle = info.videoDetails.title;
-    // const videoFileName = `${videoTitle}.${format}`;
-    // const videoStream = ytdl(url, { format: format });
-    // const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
-    // res.setHeader('Content-Disposition', contentDispositionHeader);
-    // res.setHeader('Content-Type', 'video/mp4');
-    // videoStream.pipe(res);
-
 
   }catch(error){
     console.error(error ,"ERROR IN Download Audio");
