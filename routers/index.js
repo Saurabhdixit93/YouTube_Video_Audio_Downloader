@@ -91,8 +91,8 @@ router.get('/convert-audio', async (req, res) => {
         message: 'Please Enter A Valid Youtube URL'
       });
     }
-    const audioFormats = await ytdl.getBasicInfo(videoUrl);
-    console.log(audioFormats.formats); // Add this line to see the audio formats fetched
+    const audioFormats = await ytdl.getInfo(videoUrl);
+    console.log( 'Audio Formats',audioFormats.formats); // Add this line to see the audio formats fetched
     const audioQualities = audioFormats.formats.filter((format) => {
       return format.mimeType.includes('audio/') && format.audioBitrate;
     }).map((format) => {
@@ -104,7 +104,7 @@ router.get('/convert-audio', async (req, res) => {
       };
     });
 
-    console.log(audioQualities); // Add this line to see the audio qualities generated
+    console.log('Audio Quality', audioQualities); // Add this line to see the audio qualities generated
 
     if (audioQualities.length === 0) {
       return res.render('index', {
