@@ -110,37 +110,27 @@ router.get('/download-audio', (req, res) => {
   try{
     const url = req.query.url;
     const extension = req.query.extension;
-
-    if (!url || !extension) {
-     return res.render('index',{
-        audioQualities: [],
-        title: 'Video Converter And Downloader | Youtube Converter',
-        message: 'Please Enter A Valid Youtube URL'
-      });
-    }
-
+    // const info = await ytdl.getInfo(url);
     const audioStream = ytdl(url, {
-      quality: 'highestaudio',
-      filter: 'audioonly',
+      quality: 'highestaudio'
     });
-    const fileName = `${Date.now()}.${extension}`;
-    const filePath = `/audio/${fileName}`;
 
-    audioStream.pipe(fs.createWriteStream(filePath))
-      .on('finish', () => {
-        res.download(filePath, fileName, (err) => {
-          if (err) {
-            console.error(err ,'Error In download');
-            return res.redirect('back');
-          }
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.error(err ,'Error In Unlink');
-              return res.redirect('back');
-            }
-          });
-        });
-      });
+    res.setHeader('Content-Disposition', `attachment; filename=audio.${extension}`);
+    res.setHeader('Content-Type', `audio/${extension}`);
+    audioStream.pipe(res);
+
+
+    // const url = req.query.url;
+    // const format = req.query.format;
+    // const info = await ytdl.getInfo(url);
+    // const videoTitle = info.videoDetails.title;
+    // const videoFileName = `${videoTitle}.${format}`;
+    // const videoStream = ytdl(url, { format: format });
+    // const contentDispositionHeader = `attachment; filename*=UTF-8''${encodeURIComponent(videoFileName)}`;
+    // res.setHeader('Content-Disposition', contentDispositionHeader);
+    // res.setHeader('Content-Type', 'video/mp4');
+    // videoStream.pipe(res);
+
 
   }catch(error){
     console.error(error ,"ERROR IN Download Audio");
