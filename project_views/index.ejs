@@ -36,34 +36,40 @@
     <h1 class="title">Available Audio Qualities</h1>
     <hr>
     <% if (audioQualities !== null) { %>
-    <% for (let i = 0; i < audioQualities.length; i++) { %>
-      <div class="box">
-        <div class="columns">
-          <div class="column">
-            <p class="subtitle is-6 has-text-weight-bold">Bitrate:</p>
-            <p class="subtitle is-6"><%= audioQualities[i].bitrate %></p>
-          </div>
-          <div class="column">
-            <p class="subtitle is-6 has-text-weight-bold">Extension:</p>
-            <p class="subtitle is-6"><%= audioQualities[i].extension %></p>
-          </div>
-          <div class="column">
-            <p class="subtitle is-6 has-text-weight-bold">MIME Type:</p>
-            <p class="subtitle is-6"><%= audioQualities[i].mimeType %></p>
-          </div>
-          <div class="column">
-            <a href="/download-audio?url=<%= audioQualities[i].url %>&extension=<%= audioQualities[i].extension %>" class="button is-success is-rounded is-outlined">
-              <span class="icon">
-                <i class="fas fa-download"></i>
-              </span>
-              <span>Download</span>
-            </a>
-          </div>
+    <% if (audioQualities) { %>
+      <% if (audioQualities.length > 0) { %>
+        <div class="audio-qualities">
+          <% for (let i = 0; i < audioQualities.length; i++) { %>
+            <div class="box">
+              <div class="columns">
+                <div class="column">
+                  <p class="subtitle is-6 has-text-weight-bold">Bitrate:</p>
+                  <p class="subtitle is-6"><%= audioQualities[i].bitrate %></p>
+                </div>
+                <div class="column">
+                  <p class="subtitle is-6 has-text-weight-bold">Extension:</p>
+                  <p class="subtitle is-6"><%= audioQualities[i].extension %></p>
+                </div>
+                <div class="column">
+                  <p class="subtitle is-6 has-text-weight-bold">MIME Type:</p>
+                  <p class="subtitle is-6"><%= audioQualities[i].mimeType %></p>
+                </div>
+                <div class="column">
+                  <a href="/download-audio?url=<%= audioQualities[i].url %>&extension=<%= audioQualities[i].extension %>" class="button is-success is-rounded is-outlined">
+                    <span class="icon">
+                      <i class="fas fa-download"></i>
+                    </span>
+                    <span>Download</span>
+                  </a>
+                </div>
+              </div>
+            </div>      
+          <% } %>
         </div>
-      </div>
-    <% } else { %>
+      <% } else { %>
         <p>No audio found for the given link.</p>
       <% } %>
+    <% } %>
     <% } %>
   </div>
   </div>
