@@ -227,134 +227,6 @@ router.get('/download-audio', async (req, res) => {
 });
 
 
-// router.get('/convert-audio', (req, res) => {
-//   const url = req.query.url;
-//   const audioQualities = [];
-//   if(!ytdl.validateURL(url)){
-//       return res.render('index',{
-//         audioQualities: null,
-//         title: 'Video Converter And Downloader | Youtube Converter',
-//         message: 'Please Enter A Valid Youtube URL'
-//       });
-//     }
-//   // Get available audio formats
-//   ytdl.getInfo(url, (err, info) => {
-//     if (err) {
-//       console.error(err);
-//       res.status(500).send('An error occurred');
-//       return;
-//     }
-
-//     const formats = info.formats.filter((format) => format.hasAudio && format.container === 'mp4');
-
-//     // Extract audio from each format and add to array
-//     formats.forEach((format) => {
-//       const audio = {
-//         bitrate: format.audioBitrate,
-//         mimeType: format.mimeType,
-//         extension: format.audioEncoding,
-//         url: format.url,
-//       };
-
-//       audioQualities.push(audio);
-//     });
-
-//     // Convert the audio to mp3
-//     convertAudio(audioQualities[0].url, audioQualities[0].extension)
-//       .then(() => {
-//         console.log('Converted successfully');
-//         return res.render('index', { 
-//            audioQualities,
-//            title: 'YouTube to MP3 Converter | Youtube Converter',
-//            message:'SuccessFully Converted ',
-//         });
-//       })
-//       .catch((err) => {
-//           console.error(err);
-//           return res.render('index' ,{
-//           title: 'YouTube to MP3 Converter | Youtube Converter',
-//           message: `ERROR :${err.message}`,
-//           audioQualities: [] 
-//         });
-//       });
-//   });
-//   // Convert the audio to mp3 using ffmpeg
-//   function convertAudio(audioUrl, extension) {
-//     return new Promise((resolve, reject) => {
-//       const ffmpegProcess = spawn(ffmpegStatic, [
-//         '-i',
-//         audioUrl,
-//         '-vn',
-//         '-ar',
-//         '44100',
-//         '-ac',
-//         '2',
-//         '-b:a',
-//         '192k',
-//         -f,
-//         `${extension}`,
-//         `/audio/audio.${extension}`,
-//       ]);
-
-//       ffmpegProcess.stdout.on('data', (data) => {
-//         console.log(`stdout: ${data}`);
-//       });
-
-//       ffmpegProcess.stderr.on('data', (data) => {
-//          console.error(`stderr: ${data}`);
-//       });
-
-//       ffmpegProcess.on('close', (code) => {
-//         console.log(`child process exited with code ${code}`);
-//         if (code === 0) {
-//           resolve();
-//         } else {
-//           reject(`child process exited with code ${code}`);
-//         }
-//       });
-//     });
-//   }
-// });
-
-// router.get('/download-audio', (req, res) => {
-//   const fileUrl = req.query.url;
-//   if(!ytdl.validateURL(fileUrl)){
-//     return res.render('index',{
-//       audioQualities: null,
-//       title: 'Video Converter And Downloader | Youtube Converter',
-//       message: 'Please Enter A Valid Youtube URL'
-//     });
-//   }
-//   const extension = req.query.extension;
-//   const fileName = `audio.${extension}`;
-//   const filePath = `/audio/${fileName}`;
-
-//   // Set headers for file download
-//   res.setHeader('Content-disposition', `attachment; filename=${fileName}`);
-//   res.setHeader('Content-type',` audio/${extension}`);
-
-//   // Send file to client
-//   res.download(filePath, fileName, (err) => {
-//     if (err) {
-//       console.error(err);
-//       return res.render('index' ,{
-//         title: 'YouTube to MP3 Converter | Youtube Converter',
-//         message: `ERROR :${err.message}`,
-//         audioQualities: [] 
-//       });
-//     }
-//   });
-// });
-
-
-
-
-
-
-
-
-
-
   // _--_________________
 
   // Set up the POST request route to convert the YouTube link to video
@@ -374,7 +246,15 @@ router.post('/convert-video', async (req, res) => {
     title: info.videoDetails.title,
     url: url,
     thumbnail: info.videoDetails.thumbnails[0].url,
-    formats: info.formats.filter(format => format.container === 'mp4')
+    // formats: info.formats.filter(format => format.container === 'mp4')
+    formats: videoFormats.map(format => {
+      return {
+        quality: format.qualityLabel,
+        itag: format.itag,
+        type: format.mimeType,
+        url: format.url,
+      };
+    })
   };
   return res.render('VideoConverter', { 
     video: video,
