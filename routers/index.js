@@ -106,7 +106,7 @@ router.get('/convert-audio', async (req, res) => {
 });
 
 
-router.get('/download-audio', (req, res) => {
+router.get('/download-audio', async (req, res) => {
   try{
     const url = req.query.url;
     const extension = req.query.extension;
