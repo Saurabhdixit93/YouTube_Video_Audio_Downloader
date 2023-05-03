@@ -1,4 +1,30 @@
 <title> <%= title %></title>
+
+<style>
+  .formats-list li {
+    margin: 10px;
+  }
+
+.formats-list a {
+  display: inline-block;
+  padding: 10px;
+  background-color: #009688;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.formats-list a:hover {
+  background-color: #00796b;
+}
+
+.formats-list a i {
+  margin-right: 10px;
+}
+
+</style>
+
 <section class="section">
     <div>
         <% if (message) { %>
@@ -29,30 +55,18 @@
          </div>
         </div>
        </form>
+       <br>
        <% if (video) { %>
-        <h3 class="subtitle has-text-centered">Available formats:</h3>
-        <ul style="text-align: center;">
-          <% 
-            let sortedFormats = video.formats.sort((a, b) => b.qualityLabel - a.qualityLabel);
-            let uniqueFormats = [];
-        
-            sortedFormats.forEach(function(format) {
-              if (format.qualityLabel && !uniqueFormats.includes(format.qualityLabel) && format.container) {
-                uniqueFormats.push(format.qualityLabel);
-          %>
+        <h2><%= video.title %></h2>
+        <img src="<%= video.thumbnail %>" alt="<%= video.title %>" />
+        <ul class="formats-list">
+          <% video.formats.sort((a,b) => b.height - a.height).forEach(format => { %>
             <li>
-              <a href="/download-video?format=<%= format.itag %>&url=<%= video.url %>" class="button is-primary is-small">
-                <span class="icon">
-                  <i class="fas fa-download"></i>
-                </span>
-                <span><%= format.qualityLabel %>, <span style="color: black;"><%= video.title ? video.title.substring(0, 20) : '' %>,</span> <%= format.container %></span>
+              <a href="<%= format.url %>">
+                <i class="fas fa-download"></i> Download <%= format.height %>p <%= format.container.toUpperCase() %> 
               </a>
             </li>
-            <br>
-          <% 
-            }
-          });
-          %>
+          <% }); %>
         </ul>
       <% } %>
       </div>
