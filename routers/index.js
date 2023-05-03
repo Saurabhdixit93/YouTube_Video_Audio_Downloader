@@ -58,7 +58,32 @@ router.get('/contact-us', (req,res) => {
 
 router.get('/convert-audio', async (req, res) => {
   try {
-    const videoUrl = req.query.url;
+    // const videoUrl = req.query.url;
+    // if(!ytdl.validateURL(videoUrl)){
+    //   return res.render('index',{
+    //     audioQualities: [],
+    //     title: 'Video Converter And Downloader | Youtube Converter',
+    //     message: 'Please Enter A Valid Youtube URL'
+    //   });
+    // }
+    // const audioFormats = await ytdl.getBasicInfo(videoUrl);
+    // const audioQualities = audioFormats.formats.filter((format) => {
+    //   return format.mimeType.includes('audio/') && format.audioBitrate;
+    // }).map((format) => {
+    //   return {
+    //     bitrate: format.audioBitrate,
+    //     mimeType: format.mimeType,
+    //     extension: format.container,
+    //     url: format.url,
+    //   };
+    // });
+    // console.log('Audio Converted Is this', audioQualities);
+    // return res.render('index', { 
+    //   audioQualities:audioQualities ,
+    //   title: 'YouTube to MP3 Converter | Youtube Converter',
+    //   message: "Converted Successfull"
+    // });
+     const videoUrl = req.query.url;
     if(!ytdl.validateURL(videoUrl)){
       return res.render('index',{
         audioQualities: [],
@@ -67,6 +92,7 @@ router.get('/convert-audio', async (req, res) => {
       });
     }
     const audioFormats = await ytdl.getBasicInfo(videoUrl);
+    console.log(audioFormats.formats); // Add this line to see the audio formats fetched
     const audioQualities = audioFormats.formats.filter((format) => {
       return format.mimeType.includes('audio/') && format.audioBitrate;
     }).map((format) => {
@@ -77,11 +103,21 @@ router.get('/convert-audio', async (req, res) => {
         url: format.url,
       };
     });
-    console.log('Audio Converted Is this', audioQualities);
+
+    console.log(audioQualities); // Add this line to see the audio qualities generated
+
+    if (audioQualities.length === 0) {
+      return res.render('index', {
+        audioQualities: [],
+        title: 'YouTube to MP3 Converter | Youtube Converter',
+        message: 'No audio found for the given link.'
+      });
+    }
+
     return res.render('index', { 
-      audioQualities:audioQualities ,
+      audioQualities: audioQualities,
       title: 'YouTube to MP3 Converter | Youtube Converter',
-      message: "Converted Successfull"
+      message: "Converted successfully"
     });
   } catch (error) {
     console.error(error ,"ERROR IN VIDEO CONVERT TO AUDIO");
