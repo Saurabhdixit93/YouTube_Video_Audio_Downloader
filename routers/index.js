@@ -171,17 +171,23 @@ router.get('/download-audio' , async (req ,res) => {
   //       fs.unlinkSync(path);
   //     });
     // });
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+      'Referer': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      'Origin': 'https://www.youtube.com',
+    };
     const { url } = req.query;
     axios({
       method: 'get',
-      url: url,
+      url,
+      headers,
       responseType: 'stream'
     }).then(function(response) {
       const writer = fs.createWriteStream('audio.webm');
       response.data.pipe(writer);
       console.log('Audio downloaded successfully!');
       }).catch(function(error) {
-        console.log(error);
+        console.log(error, 'Error In Download');
         return res.render('PageNotFound' ,{
           title: 'Page Not Found | 404 ',
           message: `An error occurred while downloading the audio: ${error.message}`
@@ -191,7 +197,7 @@ router.get('/download-audio' , async (req ,res) => {
     console.log(`An error occurred while downloading the audio: ${error}`);
     return res.render('PageNotFound' ,{
       title: 'Page Not Found | 404 ',
-      message: `An error occurred while downloading the audio: ${error.message}`
+      message: `An error occurred Please Try Again ! : ${error.message}`
     });
   }
 });
