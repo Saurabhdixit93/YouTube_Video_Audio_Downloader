@@ -33,11 +33,11 @@ We use nodemailer to handle email notifications for our contact form. When a use
 
 ## Installation
 
-1. Clone the repository from github https://github.com/Saurabhdixit93/YouTube_Video_Audio_Downloader
-2. Install dependencies using npm install
-3. set .env file's variables according to your crediantials
-4. Start the server using npm start
-5. Open Browser and Check http://localhost:5000
+1. Clone the repository from `github https://github.com/Saurabhdixit93/YouTube_Video_Audio_Downloader`
+2. Install dependencies using `npm install`
+3. set `.env` file's variables according to your crediantials
+4. Start the server using `npm start`
+5. Open Browser and Check `http://localhost:5000`
 
 
 ## Contributing
