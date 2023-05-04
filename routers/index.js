@@ -2,17 +2,14 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const ytdl = require('ytdl-core');
-// const youtubedl = require('youtube-dl');
 const nodemailer = require('nodemailer');
 const UserContact = require('../model/UserContact');
 const ejs = require('ejs');
-const path = require('path');
-// Set YTDL_NO_UPDATE to disable update check for all uses of ytdl-core
+//Set YTDL_NO_UPDATE to disable update check for all uses of ytdl-core
 process.env.YTDL_NO_UPDATE = '1';
 
 
-
-// Serve the index page
+//Serve the index page
 router.get('/', (req, res) => {
   return res.render('index',{
       title: 'YouTube to MP3 Converter | Youtube Converter',
@@ -21,7 +18,7 @@ router.get('/', (req, res) => {
   });
 });
 
-
+//for vdeo page
 router.get('/video-downloader', (req ,res) => {
   return res.render('VideoConverter',{
     title: 'Video Converter And Downloader | Youtube Converter',
@@ -30,23 +27,28 @@ router.get('/video-downloader', (req ,res) => {
   });
 });
 
+//terms page
 router.get('/terms' ,async(req,res) => {
     return res.render('terms',{
         title: 'Terms and Conditions | Youtube Converter'
     });
 });
 
+//privacy page
 router.get('/privacy' ,async(req,res) => {
     return res.render('privacy-policy',{
       title: 'Privacy And Policies | Youtube Converter'
     });
 });
 
+//About Us Page
 router.get('/about-us', (req,res) => {
   return res.render('AboutUs',{
     title: 'About Us | Youtube Converter'
   });
 });
+
+//Contact Us Page
 router.get('/contact-us', (req,res) => {
   return res.render('ContactUs',{
     title: 'Contact Us | Youtube Converter',
@@ -56,6 +58,8 @@ router.get('/contact-us', (req,res) => {
 
 // for url routes and function-/ _---------_ Audio Converter--------------------------------------// route for downloading audio in different qualities
 
+
+//Routes for Audio Converter
 router.get('/convert-audio', async (req, res) => {
   try {
     const videoUrl = req.query.url;
@@ -106,6 +110,7 @@ router.get('/convert-audio', async (req, res) => {
 });
 
 
+//Audio Downloader Routes
 router.get('/download-audio', async (req, res) => {
   try {
     const videoUrl = req.query.url;
@@ -136,11 +141,9 @@ router.get('/download-audio', async (req, res) => {
 });
 
 
-  // _--_________________
+// _____________________ FOR VIDEO _________________________________
 
-  // Set up the POST request route to convert the YouTube link to video
-
-
+// Set up the POST request route to convert the YouTube link to video
 router.post('/convert-video', async (req, res) => {
   const url = req.body.url;
   if(!ytdl.validateURL(url)){
