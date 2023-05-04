@@ -41,6 +41,13 @@ We use nodemailer to handle email notifications for our contact form. When a use
 
 ## Tools Used
 
+<div align="center">
+  <img src="https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=white&style=flat-square" alt="Node.js">
+  <img src="https://img.shields.io/badge/-Express.js-000000?logo=express&logoColor=white&style=flat-square" alt="Express.js">
+  <img src="https://img.shields.io/badge/-Nodemailer-4ABBF2?logo=nodemailer&logoColor=white&style=flat-square" alt="Nodemailer">
+</div>
+
+
 - Node.js
 - Nodemailer
 - Express.js
