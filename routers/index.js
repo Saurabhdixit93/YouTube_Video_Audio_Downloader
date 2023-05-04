@@ -143,24 +143,33 @@ const axios = require('axios');
 
 router.get('/download-audio' , async (req ,res) => {
 
-   try {
-    const url = req.query.url;
-    const format = req.query.format;
-
-    // Make a request to the audio URL and get the audio file as a buffer
-    const response = await axios.get(url, { responseType: 'arraybuffer' });
-    const audioBuffer = response.data;
-
-    // Create a unique filename for the audio file
-    const filename = `audio_${Date.now()}.${format}`;
-    const filePath = path.join(__dirname, 'public', filename);
-
-    // Write the audio buffer to disk
-    fs.writeFileSync(filePath, audioBuffer);
-
-    // Set the content type and send the audio file as a download
-    res.set('Content-Type', `audio/${format}`);
-    res.download(filePath, filename);
+    const { url, format } = req.query;
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+      'Referer': 'https://www.youtube.com/'
+    };
+    const config = {
+      headers,
+      responseType: 'stream'
+  };
+  try {
+    const response = await axios.get(url, config);
+    const filename = `audio.${format}`;
+    const path = `/public/audio/${filename}`;
+    const writer = fs.createWriteStream(path);
+    response.data.pipe(writer);
+    writer.on('finish', () => {
+      res.download(path, filename, (err) => {
+        if (err) {
+          console.log(`An error occurred while downloading the audio: ${err}`);
+          return res.render('PageNotFound' ,{
+            title: 'Page Not Found | 404 ',
+            message: `An error occurred while downloading the audio: ${err.message}`
+          });
+        }
+        fs.unlinkSync(path);
+      });
+    });
   } catch (error) {
     console.log(`An error occurred while downloading the audio: ${error}`);
     return res.render('PageNotFound' ,{
