@@ -1,0 +1,62 @@
+<title> <%= title %> </title>
+
+<style>
+    .hero {
+        background-image: url("/images/404.png") ;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .hero-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .white{
+        color: white;
+    }
+    .title {
+     margin-top: 2rem;
+    }
+
+    .subtitle {
+        margin-bottom: 2rem;
+    }
+
+    .button {
+        margin-top: 2rem;
+    }
+    img{
+        width: auto;
+        height: auto;
+        background-color: transparent !important;
+    }
+    
+</style>
+<% if (message) { %>
+    <div class="popup-form" id="myForm">
+      <div class="popup-content">
+        <div class="close-button" onclick="closeForm()">&times;</div>
+        <h2> <%= message %></h2>
+      </div>
+    </div>
+<% } %>
+<section class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <img src="/images/404N.gif" alt="">
+            <h1 class="title is-1 white" style="margin-top: -25px;">Oops! 404 Not Found</h1>
+            <h2 class="subtitle is-3 white">The page you are looking for does not exist.</h2>
+            <a class="button is-danger is-rounded is-outlined" href="/">
+                <span class="icon">
+                    <i class="fa-solid fa-house"></i>
+                </span>
+                <span>
+                    Go back to homepage
+                </span>
+            </a>
+          </div>
+    </div>
+</section
