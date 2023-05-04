@@ -147,7 +147,7 @@ router.get('/download-audio' , async (req ,res) => {
     const filePath = await downloadAudio(url, format);
     res.download(filePath);
   } catch (error) {
-    console.log(`An error occurred while downloading the audio: ${error.message}`);
+    console.log(`An error occurred while downloading the audio: ${error}`);
     return res.render('PageNotFound' ,{
       title: 'Page Not Found | 404 ',
       message: `An error occurred while downloading the audio: ${error.message}`
