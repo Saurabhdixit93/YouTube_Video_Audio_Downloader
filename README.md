@@ -41,10 +41,13 @@ We use nodemailer to handle email notifications for our contact form. When a use
 
 ## Tools Used
 
-- ejs
 - Node.js
-- Express.js
 - Nodemailer
+- Express.js
+- ejs
+- ytdl-core
+- ffmpeg
+
 
 
 ## Contributing
@@ -57,4 +60,6 @@ This project is licensed under the MIT License.
 
 ## Developed by -
 
-Saurabh Dixit
+<div align="center">
+  <sub>Created by Saurabh Dixit</sub>
+</div>
