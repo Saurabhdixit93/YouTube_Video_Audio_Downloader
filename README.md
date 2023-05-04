@@ -45,6 +45,9 @@ We use nodemailer to handle email notifications for our contact form. When a use
   <img src="https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=white&style=flat-square" alt="Node.js">
   <img src="https://img.shields.io/badge/-Express.js-000000?logo=express&logoColor=white&style=flat-square" alt="Express.js">
   <img src="https://img.shields.io/badge/-Nodemailer-4ABBF2?logo=nodemailer&logoColor=white&style=flat-square" alt="Nodemailer">
+  <img src="https://img.shields.io/badge/-EJS-8D1F68?logo=ejs&logoColor=white&style=flat-square" alt="EJS">
+  <img src="https://img.shields.io/badge/-ytdl--core-FF0000?logo=youtube&logoColor=white&style=flat-square" alt="ytdl-core">
+  <img src="https://img.shields.io/badge/-FFmpeg-007ACC?logo=ffmpeg&logoColor=white&style=flat-square" alt="FFmpeg">
 </div>
 
 
