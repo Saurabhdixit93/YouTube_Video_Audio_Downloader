@@ -27,6 +27,12 @@ Our terms and conditions outline the rules and regulations that govern the use o
 
 If you have any questions or concerns about our web application or our privacy policy and terms and conditions, please feel free to contact us using the form provided on our contact page. We will respond to your message as soon as possible.
 
+<div align="center">
+  <a href="mailto: smartds2550@gmail.com"><img src="https://img.shields.io/badge/-Email-D14836?logo=gmail&logoColor=white&style=for-the-badge" alt="Email"></a>
+  <a href="https://github.com/saurabhdixit93"><img src="https://img.shields.io/badge/-GitHub-181717?logo=github&logoColor=white&style=for-the-badge" alt="GitHub"></a>
+  <a href="https://linkedin.com/in/saurabhdixit93"><img src="https://img.shields.io/badge/-LinkedIn-0077B5?logo=linkedin&logoColor=white&style=for-the-badge" alt="LinkedIn"></a>
+</div>
+
 ## Nodemailer and Contact Email Notification
 
 We use nodemailer to handle email notifications for our contact form. When a user submits a message using the contact form, nodemailer sends an email notification to our contact email address. This ensures that we are aware of all user inquiries and can respond to them in a timely manner. We take all necessary measures to ensure the security and privacy of user data during this process.
