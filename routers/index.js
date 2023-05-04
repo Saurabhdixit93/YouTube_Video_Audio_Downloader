@@ -5,7 +5,7 @@ const ytdl = require('ytdl-core');
 const nodemailer = require('nodemailer');
 const UserContact = require('../model/UserContact');
 const ejs = require('ejs');
-const request = require('request');
+// const request = require('request');
 //Set YTDL_NO_UPDATE to disable update check for all uses of ytdl-core
 process.env.YTDL_NO_UPDATE = '1';
 
