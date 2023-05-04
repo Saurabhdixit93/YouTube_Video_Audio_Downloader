@@ -39,6 +39,13 @@ We use nodemailer to handle email notifications for our contact form. When a use
 4. Start the server using `npm start`
 5. Open Browser and Check `http://localhost:5000`
 
+## Tools Used
+
+- ejs
+- Node.js
+- Express.js
+- Nodemailer
+
 
 ## Contributing
 
