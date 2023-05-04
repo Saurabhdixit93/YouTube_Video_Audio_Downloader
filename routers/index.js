@@ -143,33 +143,50 @@ const axios = require('axios');
 
 router.get('/download-audio' , async (req ,res) => {
 
-    const { url, format } = req.query;
-    const headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-      'Referer': 'https://www.youtube.com/'
-    };
-    const config = {
-      headers,
+  
+  try{
+  //   const headers = {
+  //     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+  //     'Referer': 'https://www.youtube.com/'
+  //   };
+  //   const config = {
+  //     headers,
+  //     responseType: 'stream'
+  // };
+  // try {
+  //   const response = await axios.get(url, config);
+  //   const filename = `audio.${format}`;
+  //   const path = `/public/audio/${filename}`;
+  //   const writer = fs.createWriteStream(path);
+  //   response.data.pipe(writer);
+  //   writer.on('finish', () => {
+  //     res.download(path, filename, (err) => {
+  //       if (err) {
+  //         console.log(`An error occurred while downloading the audio: ${err}`);
+  //         return res.render('PageNotFound' ,{
+  //           title: 'Page Not Found | 404 ',
+  //           message: `An error occurred while downloading the audio: ${err.message}`
+  //         });
+  //       }
+  //       fs.unlinkSync(path);
+  //     });
+    // });
+    const { url } = req.query;
+    axios({
+      method: 'get',
+      url: url,
       responseType: 'stream'
-  };
-  try {
-    const response = await axios.get(url, config);
-    const filename = `audio.${format}`;
-    const path = `/public/audio/${filename}`;
-    const writer = fs.createWriteStream(path);
-    response.data.pipe(writer);
-    writer.on('finish', () => {
-      res.download(path, filename, (err) => {
-        if (err) {
-          console.log(`An error occurred while downloading the audio: ${err}`);
-          return res.render('PageNotFound' ,{
-            title: 'Page Not Found | 404 ',
-            message: `An error occurred while downloading the audio: ${err.message}`
-          });
-        }
-        fs.unlinkSync(path);
+    }).then(function(response) {
+      const writer = fs.createWriteStream('audio.webm');
+      response.data.pipe(writer);
+      console.log('Audio downloaded successfully!');
+      }).catch(function(error) {
+        console.log(error);
+        return res.render('PageNotFound' ,{
+          title: 'Page Not Found | 404 ',
+          message: `An error occurred while downloading the audio: ${error.message}`
+        });
       });
-    });
   } catch (error) {
     console.log(`An error occurred while downloading the audio: ${error}`);
     return res.render('PageNotFound' ,{
