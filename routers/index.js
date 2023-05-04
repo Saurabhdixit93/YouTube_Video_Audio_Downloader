@@ -110,42 +110,57 @@ router.get('/convert-audio', async (req, res) => {
   }
 });
 
-const https = require('https');
-const url = require('url');
+// const https = require('https');
+// const url = require('url');
 
 
-function downloadAudio(audioUrl) {
-  return new Promise((resolve, reject) => {
-    const urlParts = url.parse(audioUrl, true);
-    const format = urlParts.query.format;
+// function downloadAudio(audioUrl) {
+//   return new Promise((resolve, reject) => {
+//     const urlParts = url.parse(audioUrl, true);
+//     const format = urlParts.query.format;
 
-    https.get(audioUrl, (res) => {
-      if (res.statusCode !== 200) {
-        reject(new Error(`Failed to download audio with status code ${res.statusCode}`));
-        return;
-      }
+//     https.get(audioUrl, (res) => {
+//       if (res.statusCode !== 200) {
+//         reject(new Error(`Failed to download audio with status code ${res.statusCode}`));
+//         return;
+//       }
 
-      const chunks = [];
-      res.on('data', (chunk) => {
-        chunks.push(chunk);
-      });
+//       const chunks = [];
+//       res.on('data', (chunk) => {
+//         chunks.push(chunk);
+//       });
 
-      res.on('end', () => {
-        const audioBuffer = Buffer.concat(chunks);
-        resolve({ format, audioBuffer });
-      });
-    }).on('error', (err) => {
-      reject(err);
-    });
-  });
-}
+//       res.on('end', () => {
+//         const audioBuffer = Buffer.concat(chunks);
+//         resolve({ format, audioBuffer });
+//       });
+//     }).on('error', (err) => {
+//       reject(err);
+//     });
+//   });
+// }
+const axios = require('axios');
 
 router.get('/download-audio' , async (req ,res) => {
-  const { url, format } = req.query;
 
-  try {
-    const filePath = await downloadAudio(url, format);
-    res.download(filePath);
+   try {
+    const url = req.query.url;
+    const format = req.query.format;
+
+    // Make a request to the audio URL and get the audio file as a buffer
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    const audioBuffer = response.data;
+
+    // Create a unique filename for the audio file
+    const filename = `audio_${Date.now()}.${format}`;
+    const filePath = path.join(__dirname, 'public', filename);
+
+    // Write the audio buffer to disk
+    fs.writeFileSync(filePath, audioBuffer);
+
+    // Set the content type and send the audio file as a download
+    res.set('Content-Type', `audio/${format}`);
+    res.download(filePath, filename);
   } catch (error) {
     console.log(`An error occurred while downloading the audio: ${error}`);
     return res.render('PageNotFound' ,{
