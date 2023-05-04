@@ -5,6 +5,7 @@ const ytdl = require('ytdl-core');
 const nodemailer = require('nodemailer');
 const UserContact = require('../model/UserContact');
 const ejs = require('ejs');
+const request = require('request');
 //Set YTDL_NO_UPDATE to disable update check for all uses of ytdl-core
 process.env.YTDL_NO_UPDATE = '1';
 
@@ -109,98 +110,146 @@ router.get('/convert-audio', async (req, res) => {
   }
 });
 
-
-//Audio Downloader Routes
-router.get('/download-audio', async (req, res) => {
-  // try {
-  //   const videoUrl = req.query.url;
-  //   const audioFormat = req.query.format;
-
-  //  // if (!ytdl.validateURL(videoUrl)) {
-  //    //return res.render('index', {
-  //      // audioQualities: [],
-  //      // title 'Video Converter And Downloader | Youtube Converter',
-  //     //  message: 'Please Enter A Valid Youtube URL',
-  //    // });//
-  //   //}
-   
-
-  //   const audioStream = ytdl(videoUrl, ['--format=' + audioFormat]);
-
-  //   const fileName = `audio.${audioFormat}`;
-  //   res.setHeader('Content-disposition', `attachment; filename="${fileName}"`);
-  //   res.setHeader('Content-Type', 'audio/mpeg');
-
-  //   audioStream.pipe(res);
-  // } catch (error) {
-  //   console.error(error, 'ERROR IN Download Audio');
-  //   return res.render('PageNotFound' ,{
-  //     title: 'Page Not Found | 404 ',
-  //     message: `Oops! Error:${error.message}` 
-  //   });
-  // }
-   try{
-      const audioUrl = req.query.url;
-      const fileName = req.query.format;
+const https = require('https');
+const url = require('url');
 
 
-      const download = (url, dest, cb) => {
-        const file = fs.createWriteStream(dest);
-        const sendReq = request.get(url);
+function downloadAudio(audioUrl) {
+  return new Promise((resolve, reject) => {
+    const urlParts = url.parse(audioUrl, true);
+    const format = urlParts.query.format;
 
-        // verify response code
-        sendReq.on('response', (response) => {
-          if (response.statusCode !== 200) {
-            return cb('Response status was ' + response.statusCode);
-          }
-
-          sendReq.pipe(file);
-        });
-
-        // close the write stream
-        file.on('finish', () => {
-          file.close(cb);
-        });
-
-        // handle errors
-        sendReq.on('error', (err) => {
-          fs.unlink(dest);
-          return cb(err.message);
-        });
-
-        file.on('error', (err) => {
-          fs.unlink(dest);
-          return cb(err.message);
-        });
-      };
-
-    download(audioUrl, fileName, (err) => {
-      if (err) {
-        return res.render('PageNotFound' ,{
-          title: 'Page Not Found | 404 ',
-          message: `Oops! Error:${err.message}` 
-        });
+    https.get(audioUrl, (res) => {
+      if (res.statusCode !== 200) {
+        reject(new Error(`Failed to download audio with status code ${res.statusCode}`));
+        return;
       }
-      
-      res.download(fileName, (err) => {
-        if (err) {
-          fs.unlinkSync(fileName);
-          return res.render('PageNotFound' ,{
-            title: 'Page Not Found | 404 ',
-            message: `Oops! Error:${err.message}` 
-          });
-        }
-        fs.unlinkSync(fileName);
+
+      const chunks = [];
+      res.on('data', (chunk) => {
+        chunks.push(chunk);
       });
+
+      res.on('end', () => {
+        const audioBuffer = Buffer.concat(chunks);
+        resolve({ format, audioBuffer });
+      });
+    }).on('error', (err) => {
+      reject(err);
     });
-   }catch(error){
-    console.error(error, 'ERROR IN Download Audio');
+  });
+}
+
+router.get('/download-audio' , async (req ,res) => {
+  const { url, format } = req.query;
+
+  try {
+    const filePath = await downloadAudio(url, format);
+    res.download(filePath);
+  } catch (error) {
     return res.render('PageNotFound' ,{
       title: 'Page Not Found | 404 ',
-      message: `Oops! Error:${error.message}` 
+      message: `An error occurred while downloading the audio: ${error.message}`
     });
-   }
+  }
 });
+
+
+
+
+
+
+// //Audio Downloader Routes
+// router.get('/download-audio', async (req, res) => {
+//   // try {
+//   //   const videoUrl = req.query.url;
+//   //   const audioFormat = req.query.format;
+
+//   //  // if (!ytdl.validateURL(videoUrl)) {
+//   //    //return res.render('index', {
+//   //      // audioQualities: [],
+//   //      // title 'Video Converter And Downloader | Youtube Converter',
+//   //     //  message: 'Please Enter A Valid Youtube URL',
+//   //    // });//
+//   //   //}
+   
+
+//   //   const audioStream = ytdl(videoUrl, ['--format=' + audioFormat]);
+
+//   //   const fileName = `audio.${audioFormat}`;
+//   //   res.setHeader('Content-disposition', `attachment; filename="${fileName}"`);
+//   //   res.setHeader('Content-Type', 'audio/mpeg');
+
+//   //   audioStream.pipe(res);
+//   // } catch (error) {
+//   //   console.error(error, 'ERROR IN Download Audio');
+//   //   return res.render('PageNotFound' ,{
+//   //     title: 'Page Not Found | 404 ',
+//   //     message: `Oops! Error:${error.message}` 
+//   //   });
+//   // }
+//    try{
+//       const audioUrl = req.query.url;
+//       const fileName = req.query.format;
+
+
+//       const download = (url, dest, cb) => {
+//         const file = fs.createWriteStream(dest);
+//         const sendReq = request.get(url);
+
+//         // verify response code
+//         sendReq.on('response', (response) => {
+//           if (response.statusCode !== 200) {
+//             return cb('Response status was ' + response.statusCode);
+//           }
+
+//           sendReq.pipe(file);
+//         });
+
+//         // close the write stream
+//         file.on('finish', () => {
+//           file.close(cb);
+//         });
+
+//         // handle errors
+//         sendReq.on('error', (err) => {
+//           fs.unlink(dest);
+//           return cb(err.message);
+//         });
+
+//         file.on('error', (err) => {
+//           fs.unlink(dest);
+//           return cb(err.message);
+//         });
+//       };
+
+//     download(audioUrl, fileName, (err) => {
+//       if (err) {
+//         return res.render('PageNotFound' ,{
+//           title: 'Page Not Found | 404 ',
+//           message: `Oops! Error:${err.message}` 
+//         });
+//       }
+      
+//       res.download(fileName, (err) => {
+//         if (err) {
+//           fs.unlinkSync(fileName);
+//           return res.render('PageNotFound' ,{
+//             title: 'Page Not Found | 404 ',
+//             message: `Oops! Error:${err.message}` 
+//           });
+//         }
+//         fs.unlinkSync(fileName);
+//       });
+//     });
+//    }catch(error){
+//     console.error(error, 'ERROR IN Download Audio');
+//     return res.render('PageNotFound' ,{
+//       title: 'Page Not Found | 404 ',
+//       message: `Oops! Error:${error.message}` 
+//     });
+//    }
+// });
 
 
 // _____________________ FOR VIDEO _________________________________
