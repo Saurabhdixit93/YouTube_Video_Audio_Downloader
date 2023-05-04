@@ -54,10 +54,13 @@
                   <p class="subtitle is-6 has-text-weight-bold">MIME Type:</p>
                   <p class="subtitle is-6"><%= audioQualities[i].mimeType %></p>
                 </div>
-               <div class="column">
+                <div class="column">
                   <a href="<%= audioQualities[i].url%>
-                   &extension=<%= audioQualities[i].extension %>&format=<%= audioQualities[i].mimeType %>" 
-                    class="button is-success is-rounded is-outlined download-link">
+                  &extension=<%= audioQualities[i].extension %>&format=<%= audioQualities[i].mimeType %>" 
+                    class="button is-success is-rounded is-outlined"
+                    download="<%= audioQualities[i].filename %>"
+                    onclick="this.target='_self';"
+                    >
                     <span class="icon">
                       <i class="fas fa-download"></i>
                     </span>
