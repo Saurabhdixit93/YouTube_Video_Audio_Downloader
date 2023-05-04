@@ -56,94 +56,6 @@ router.get('/contact-us', (req,res) => {
 
 // for url routes and function-/ _---------_ Audio Converter--------------------------------------// route for downloading audio in different qualities
 
-// router.get('/convert-audio', async (req, res) => {
-//   try {
-   
-//     const videoUrl = req.query.url;
-//     if(!ytdl.validateURL(videoUrl)){
-//       return res.render('index',{
-//         audioQualities: [],
-//         title: 'Video Converter And Downloader | Youtube Converter',
-//         message: 'Please Enter A Valid Youtube URL'
-//       });
-//     }
-//     const audioFormats = await ytdl.getInfo(videoUrl);
-//     console.log( 'Audio Formats',audioFormats.formats); // Add this line to see the audio formats fetched
-//     const audioQualities = audioFormats.formats.filter((format) => {
-//       return format.mimeType.includes('audio/') && format.audioBitrate;
-//     }).map((format) => {
-//       return {
-//         bitrate: format.audioBitrate,
-//         mimeType: format.mimeType,
-//         extension: format.container,
-//         url: format.url,
-//       };
-//     });
-
-//     console.log('Audio Quality', audioQualities); // Add this line to see the audio qualities generated
-
-//     if (audioQualities.length === 0) {
-//       return res.render('index', {
-//         audioQualities: [],
-//         title: 'YouTube to MP3 Converter | Youtube Converter',
-//         message: 'No audio found for the given link.'
-//       });
-//     }
-
-//     return res.render('index', { 
-//       audioQualities: audioQualities,
-//       title: 'YouTube to MP3 Converter | Youtube Converter',
-//       message: "Converted successfully"
-//     });
-//   } catch (error) {
-//     console.error(error ,"ERROR IN VIDEO CONVERT TO AUDIO");
-//     return res.render('index' ,{
-//       audioQualities: [],
-//       title: 'YouTube to MP3 Converter | Youtube Converter',
-//       message: `ERROR :${error.message}` 
-//     });
-//   }
-// });
-
-
-// router.get('/download-audio', async (req, res) => {
-//   try{
-//     const url = req.query.url;
-//     const extension = req.query.extension;
-//     const info = await ytdl.getInfo(url);
-//     const audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
-//     const audio = audioFormats.find((format) => format.container === extension);
-//     if (!audio) {
-//       return res.render('index', {
-//         audioQualities: [],
-//         title: 'YouTube to MP3 Converter | Youtube Converter',
-//         message: `Cannot find the requested format (${extension})`,
-//       });
-//     }
-//     const audioStream = ytdl(url, {
-//       quality: audio.itag,
-//       filter: (format) => format.container === extension,
-//     });
-//     const title = info.videoDetails.title;
-//     const fileName = `${title}.${extension}`;
-
-//     res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(fileName)}"`);
-//     res.setHeader('Content-Type', `audio/${extension}`);
-//     audioStream.pipe(res);
-
-//   }catch(error){
-//     console.error(error ,"ERROR IN Download Audio");
-//     return res.render('index' ,{
-//          audioQualities: [],
-//       title: 'YouTube to MP3 Converter | Youtube Converter',
-//       message: `ERROR :${error.message}` 
-//     });
-//   }
-// });
-
-
-
-
 router.get('/convert-audio', async (req, res) => {
   try {
     const videoUrl = req.query.url;
@@ -186,10 +98,9 @@ router.get('/convert-audio', async (req, res) => {
     });
   } catch (error) {
     console.error(error, 'ERROR IN VIDEO CONVERT TO AUDIO');
-    return res.render('index', {
-      audioQualities: [],
-      title: 'YouTube to MP3 Converter | Youtube Converter',
-      message: `ERROR: ${error.message}`,
+    return res.render('PageNotFound' ,{
+      title: 'Page Not Found | 404 ',
+      message: `Oops! Error:${error.message}` 
     });
   }
 });
@@ -217,10 +128,9 @@ router.get('/download-audio', async (req, res) => {
     audioStream.pipe(res);
   } catch (error) {
     console.error(error, 'ERROR IN Download Audio');
-    return res.render('index', {
-      audioQualities: [],
-      title: 'YouTube to MP3 Converter | Youtube Converter',
-      message: `ERROR: ${error.message}`,
+    return res.render('PageNotFound' ,{
+      title: 'Page Not Found | 404 ',
+      message: `Oops! Error:${error.message}` 
     });
   }
 });
@@ -229,39 +139,6 @@ router.get('/download-audio', async (req, res) => {
   // _--_________________
 
   // Set up the POST request route to convert the YouTube link to video
-
-// router.post('/convert-video', async (req, res) => {
-//   try{
-//     const url = req.body.url;
-//     if(!ytdl.validateURL(url)){
-//       return res.render('VideoConverter',{
-//         video: null,
-//         title: 'Video Converter And Downloader | Youtube Converter',
-//         message: 'Please Enter A Valid Youtube URL'
-      
-//       });
-//     }
-//     const info = await ytdl.getInfo(url);
-//     const video = {
-//       title: info.videoDetails.title,
-//       url: url,
-//       thumbnail: info.videoDetails.thumbnails[0].url,
-//       formats: info.formats.filter(format => format.container === 'mp4')
-//     };
-//     return res.render('VideoConverter', { 
-//       video: video,
-//       title: 'Video Converter And Downloader | Youtube Converter',
-//       message: 'Converted Successfully , Please Download'
-//     });
-//   }catch(error){
-//     console.log('Error Video Converting:' ,error);
-//     return res.render('VideoConverter', { 
-//       video: null,
-//       title: 'Video Converter And Downloader | Youtube Converter',
-//       message: `'Error When Converting' ,${error.message}`
-//     });
-//   }
-// });  // main without formats map
 
 
 router.post('/convert-video', async (req, res) => {
@@ -303,10 +180,10 @@ router.post('/convert-video', async (req, res) => {
       res.setHeader('Content-Type', 'video/mp4');
       videoStream.pipe(res);
     }catch(error){
-      return res.render('VideoConverter', { 
-        video: null,
-        title: 'Video Converter And Downloader | Youtube Converter',
-        message: `'Error When Downloading' ,${error.message}`
+      console.log('Error In Download:', error);
+      return res.render('PageNotFound' ,{
+        title: 'Page Not Found | 404 ',
+        message: `Oops! Error:${error.message}` 
       });
     }
 });
@@ -356,9 +233,9 @@ router.post('/send-contact-form' ,async (req , res) => {
     // Send the email
     transporter.sendMail(mailOptions, (err) => {
       if (err) {
-        return res.render('ContactUs', {
-          title: 'Contact Us | Youtube Converter',
-          message: 'There was an Error Please Try Again.'
+        return res.render('PageNotFound' ,{
+          title: 'Page Not Found | 404 ',
+          message: `Oops! Error:${error.message}` 
         });
       } else {
         return res.render('ContactUs', {
@@ -369,9 +246,9 @@ router.post('/send-contact-form' ,async (req , res) => {
     });
   }catch(error){
     console.log('An error occurred: ' + error.message);
-    return res.render('ContactUs', {
-      title: 'Contact Us | Youtube Converter',
-      message: 'An error occurred while Submitting Contact Form.'
+    return res.render('PageNotFound' ,{
+      title: 'Page Not Found | 404 ',
+      message: `Oops! Error:${error.message}` 
     });
   }
 });
