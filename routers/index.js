@@ -172,15 +172,13 @@ router.get('/download-audio' , async (req ,res) => {
   //     });
     // });
     const headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-      'Referer': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      'Origin': 'https://www.youtube.com',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
     };
     const { url } = req.query;
     axios({
       method: 'get',
-      url,
-      headers,
+      url:url,
+      headers: headers,
       responseType: 'stream'
     }).then(function(response) {
       const writer = fs.createWriteStream('audio.webm');
