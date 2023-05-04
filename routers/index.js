@@ -112,33 +112,94 @@ router.get('/convert-audio', async (req, res) => {
 
 //Audio Downloader Routes
 router.get('/download-audio', async (req, res) => {
-  try {
-    const videoUrl = req.query.url;
-    const audioFormat = req.query.format;
+  // try {
+  //   const videoUrl = req.query.url;
+  //   const audioFormat = req.query.format;
 
-   // if (!ytdl.validateURL(videoUrl)) {
-     //return res.render('index', {
-       // audioQualities: [],
-       // title 'Video Converter And Downloader | Youtube Converter',
-      //  message: 'Please Enter A Valid Youtube URL',
-     // });//
-    //}
+  //  // if (!ytdl.validateURL(videoUrl)) {
+  //    //return res.render('index', {
+  //      // audioQualities: [],
+  //      // title 'Video Converter And Downloader | Youtube Converter',
+  //     //  message: 'Please Enter A Valid Youtube URL',
+  //    // });//
+  //   //}
    
 
-    const audioStream = ytdl(videoUrl, ['--format=' + audioFormat]);
+  //   const audioStream = ytdl(videoUrl, ['--format=' + audioFormat]);
 
-    const fileName = `audio.${audioFormat}`;
-    res.setHeader('Content-disposition', `attachment; filename="${fileName}"`);
-    res.setHeader('Content-Type', 'audio/mpeg');
+  //   const fileName = `audio.${audioFormat}`;
+  //   res.setHeader('Content-disposition', `attachment; filename="${fileName}"`);
+  //   res.setHeader('Content-Type', 'audio/mpeg');
 
-    audioStream.pipe(res);
-  } catch (error) {
+  //   audioStream.pipe(res);
+  // } catch (error) {
+  //   console.error(error, 'ERROR IN Download Audio');
+  //   return res.render('PageNotFound' ,{
+  //     title: 'Page Not Found | 404 ',
+  //     message: `Oops! Error:${error.message}` 
+  //   });
+  // }
+   try{
+      const audioUrl = req.query.url;
+      const fileName = req.query.format;
+
+
+      const download = (url, dest, cb) => {
+        const file = fs.createWriteStream(dest);
+        const sendReq = request.get(url);
+
+        // verify response code
+        sendReq.on('response', (response) => {
+          if (response.statusCode !== 200) {
+            return cb('Response status was ' + response.statusCode);
+          }
+
+          sendReq.pipe(file);
+        });
+
+        // close the write stream
+        file.on('finish', () => {
+          file.close(cb);
+        });
+
+        // handle errors
+        sendReq.on('error', (err) => {
+          fs.unlink(dest);
+          return cb(err.message);
+        });
+
+        file.on('error', (err) => {
+          fs.unlink(dest);
+          return cb(err.message);
+        });
+      };
+
+    download(audioUrl, fileName, (err) => {
+      if (err) {
+        return res.render('PageNotFound' ,{
+          title: 'Page Not Found | 404 ',
+          message: `Oops! Error:${err.message}` 
+        });
+      }
+      
+      res.download(fileName, (err) => {
+        if (err) {
+          fs.unlinkSync(fileName);
+          return res.render('PageNotFound' ,{
+            title: 'Page Not Found | 404 ',
+            message: `Oops! Error:${err.message}` 
+          });
+        }
+        fs.unlinkSync(fileName);
+      });
+    });
+   }catch(error){
     console.error(error, 'ERROR IN Download Audio');
     return res.render('PageNotFound' ,{
       title: 'Page Not Found | 404 ',
       message: `Oops! Error:${error.message}` 
     });
-  }
+   }
 });
 
 
