@@ -57,9 +57,7 @@
                <div class="column">
                   <a href="<%= audioQualities[i].url%>
                    &extension=<%= audioQualities[i].extension %>&format=<%= audioQualities[i].mimeType %>" 
-                    class="button is-success is-rounded is-outlined"
-                    download="downloaded_file.opus"
-                    >
+                    class="button is-success is-rounded is-outlined download-link">
                     <span class="icon">
                       <i class="fas fa-download"></i>
                     </span>
@@ -71,7 +69,7 @@
           <% } %>
         </div>
       <% } else { %>
-        <p>No audio found for the given link.</p>
+        <p>Provide the link and click to convert</p>
       <% } %>
     <% } %>
     <% } %>
@@ -79,4 +77,11 @@
   </div>
 </section>
 
-
+<script>
+  const downloadLinks = document.querySelectorAll('.download-link');
+  downloadLinks.forEach(link => {
+    const url = link.getAttribute('href');
+    const fileName = url.substring(url.lastIndexOf('/') + 1);
+    link.setAttribute('download', fileName);
+  });
+</script>
