@@ -93,5 +93,9 @@ If you want to reach out to the developer directly, you can use the following co
 ## Developed by -
 
 <div align="center">
-  <sub> # Saurabh Dixit </sub>
+
+  <sub><b>Saurabh Dixit</b></sub>
+
 </div>
+
+
